@@ -1,0 +1,5 @@
+jsonschema
+-e git+https://github.com/RussellLuo/jsonform.git#egg=jsonform
+jsonpatch
+pymongo
+flask
