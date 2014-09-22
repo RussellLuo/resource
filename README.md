@@ -14,7 +14,14 @@ You have data somewhere:
 
 and you want to expose it to your users through a RESTful Web API. `Resource` is a convenient library that allows you to do so.
 
-`Resource` is database agnostic and web framework agnostic, which means you can choose database (MongoDB, MySQL, etc.) and web framework (flask, Django, etc.) yourself.
+`Resource` is database agnostic and web framework agnostic, which means you can choose database (MongoDB, MySQL, etc.) and web framework (Flask, Django, etc.) yourself.
+
+
+Roadmap
+-------
+
++ Support for MySQL and other RDBMS
++ Documentation
 
 
 Getting Started
@@ -22,14 +29,14 @@ Getting Started
 
 ### Run REST Server
 
-#### setup environment
+#### 1. setup environment
 
     $ cd resource
     $ virtualenv env
     $ source env/bin/activate
     (env)$ pip install -r requirements.txt
 
-#### configure resources in your `settings.py`
+#### 2. configure resources in your `settings.py`
 
     from pymongo import MongoClient
     from jsonform import JsonForm
@@ -54,7 +61,7 @@ Getting Started
                 kwargs={'engine': DB['user']})
     ]
 
-3. run demo server
+#### 3. run demo server
 
     (env)$ python demo/settings.py
 
