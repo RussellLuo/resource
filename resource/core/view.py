@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from .response import Response
-from .exceptions import RSRCException
+from .exceptions import BaseError
 
 
-def serialized(arg):
+def serialized(arg=None):
     def wrapper(method):
         def decorator(self, **kwargs):
             # deserialize special arguments from request
@@ -14,7 +14,7 @@ def serialized(arg):
 
             try:
                 response = method(self, **kwargs)
-            except RSRCException as e:
+            except BaseError as e:
                 return Response(e.detail, e.status_code)
 
             # serialize special arguments from respsone
@@ -52,6 +52,7 @@ class View(object):
     def patch_proxy(self, pk, data):
         return self.patch(pk, data)
 
+    @serialized()
     def delete_proxy(self, pk):
         return self.delete(pk)
 

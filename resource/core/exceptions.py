@@ -7,9 +7,14 @@ from __future__ import unicode_literals
 from . import status
 
 
-class RSRCException(Exception):
+class BaseError(Exception):
+    """Base class for Resource exceptions."""
+    pass
+
+
+class StatusCodeError(BaseError):
     """
-    Base class for Resource exceptions.
+    Base class for kinds of Status-Code Resource exceptions.
     Subclasses should provide `.status_code` and `.default_detail` properties.
     """
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -22,6 +27,6 @@ class RSRCException(Exception):
         return self.detail
 
 
-class NotFound(RSRCException):
+class NotFoundError(StatusCodeError):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = 'Resource not found.'

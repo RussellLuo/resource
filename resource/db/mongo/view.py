@@ -1,23 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from bson import ObjectId
+import bson
 from jsonpatch import JsonPatch
 
 from resource import View, Response, status
-from resource.core.exceptions import NotFound
+from resource.core.exceptions import NotFoundError
 from resource.utils import get_exception_detail
 
 
 class Collection(View):
     """For MongoDB (NoSQL)."""
 
+    def get_pk(self, pk):
+        try:
+            return bson.ObjectId(pk)
+        except bson.errors.InvalidId:
+            raise NotFoundError()
+
     def get_doc(self, pk):
-        doc = self.engine.find_one({'_id': ObjectId(pk)})
+        doc = self.engine.find_one({'_id': self.get_pk(pk)})
         if doc:
             return doc
         else:
-            raise NotFound()
+            raise NotFoundError()
 
     def get(self, pk=None, filter_=None):
         if pk is None:
@@ -37,7 +43,7 @@ class Collection(View):
         form = self.form_cls(data)
         if form.is_valid():
             doc = form.document
-            doc.update({'_id': ObjectId(pk)})
+            doc.update({'_id': self.get_pk(pk)})
             self.engine.remove({'_id': doc['_id']})
             self.engine.insert(doc)
             return Response(status=status.HTTP_204_NO_CONTENT)

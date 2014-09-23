@@ -17,6 +17,6 @@ setup(
     long_description=long_description,
     packages=['resource'],
     url='https://github.com/RussellLuo/resource',
-    install_requires=['jsonschema', 'jsonform', 'jsonpatch',
-                      'pymongo', 'flask'],
+    install_requires=['jsonform', 'jsonpatch', 'pymongo',
+                      'SQLAlchemy', 'sqlsoup', 'Flask'],
 )
