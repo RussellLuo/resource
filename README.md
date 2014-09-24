@@ -14,14 +14,22 @@ You have data somewhere:
 
 and you want to expose it to your users through a RESTful Web API. `Resource` is a convenient library that allows you to do so.
 
-`Resource` is database agnostic and web framework agnostic, which means you can choose database (MongoDB, MySQL, etc.) and web framework (Flask, Django, etc.) yourself.
+`Resource` is database agnostic and web framework agnostic, which means you should/can choose databases (MongoDB, MySQL, etc.) and web frameworks (Flask, Django, etc.) yourself.
+
+
+Features
+--------
+
++ Support MongoDB
++ Support RDBMS (SQLite, MySQL, etc.)
++ Support Flask
 
 
 Roadmap
 -------
 
-+ Support for MySQL and other RDBMS
 + Documentation
++ Support Django
 
 
 Getting Started
@@ -63,7 +71,12 @@ Getting Started
 
 #### 3. run demo server
 
-    (env)$ python demo/settings.py
+    (env)$ # Run MongoDB demo
+    (env)$ python demo/mongodb/settings.py
+
+    (env)$ # Run SQLite demo
+    (env)$ python demo/sqlite/create_tables.py
+    (env)$ python demo/sqlite/settings.py
 
 ### Use REST Client
 
