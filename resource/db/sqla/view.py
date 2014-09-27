@@ -58,9 +58,9 @@ class Table(View):
     def post(self, data):
         form = self.form_cls(data)
         if form.is_valid():
-            self.engine.insert(**form.document)
+            row = self.engine.insert(**form.document)
             self.db.commit()
-            return Response(status=status.HTTP_201_CREATED)
+            return Response({'id': row.id}, status=status.HTTP_201_CREATED)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, pk, data):
