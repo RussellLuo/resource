@@ -7,7 +7,7 @@ from flask import Flask
 
 from resource import Resource
 from resource.db.sqla import Table
-from resource.framework.flask import add_resource
+from resource.contrib.framework.flask import add_resource
 
 
 DB = create_engine('sqlite:///sqlite.db')

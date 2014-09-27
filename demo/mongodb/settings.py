@@ -7,7 +7,7 @@ from flask import Flask
 
 from resource import Resource
 from resource.db.mongo import Collection, MongoSerializer
-from resource.framework.flask import add_resource
+from resource.contrib.framework.flask import add_resource
 
 
 DB = MongoClient().test
