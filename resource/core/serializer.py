@@ -2,27 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import copy
-from datetime import datetime
-
-from bson import ObjectId
-
-
-DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-
-
-SERIALIZE_SCHEMA = {
-    'objectid': lambda value: str(value),
-    'datetime': lambda value: value.strftime(DATE_FORMAT)
-}
-
-
-DESERIALIZE_SCHEMA = {
-    'objectid': lambda value: ObjectId(value),
-    'datetime': lambda value: datetime.strptime(value, DATE_FORMAT)
-}
 
 
 class Serializer(object):
+
+    serialize_schema = {}
+
+    deserialize_schema = {}
 
     structure = {}
 
@@ -50,7 +36,7 @@ class Serializer(object):
         return converted
 
     def serialize(self, data):
-        return self.convert(SERIALIZE_SCHEMA, self.structure, data)
+        return self.convert(self.serialize_schema, self.structure, data)
 
     def deserialize(self, data):
-        return self.convert(DESERIALIZE_SCHEMA, self.structure, data)
+        return self.convert(self.deserialize_schema, self.structure, data)
