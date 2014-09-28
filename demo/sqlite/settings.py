@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from jsonform import JsonForm
 from sqlalchemy import create_engine
 from flask import Flask
@@ -14,11 +16,16 @@ DB = create_engine('sqlite:///sqlite.db')
 
 
 class UserForm(JsonForm):
+    def validate_datetime(value):
+        if not isinstance(value, datetime):
+            return 'value must be an instance of `datetime`'
+
     schema = {
         'type': 'object',
         'properties': {
             'name': {'type': 'string'},
-            'password': {'type': 'string'}
+            'password': {'type': 'string'},
+            'date_joined': {'custom': validate_datetime}
         }
     }
 

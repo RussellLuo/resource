@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+from datetime import datetime
 
 import requests
 import json
@@ -17,8 +18,11 @@ class MongoUserTest(unittest.TestCase):
     def setUp(self):
         self.db = MongoClient().test
 
-        _id = self.db.user.insert({'name': 'russell', 'password': '123456'})
-        self.id = str(_id)
+        self.id = str(self.db.user.insert({
+            'name': 'russell',
+            'password': '123456',
+            'date_joined': datetime(2014, 9, 27)
+        }))
 
         self.headers = {'content-type': 'application/json'}
 
@@ -32,11 +36,20 @@ class MongoUserTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(
             resp.json(),
-            [{'_id': self.id, 'name': 'russell', 'password': '123456'}]
+            [{
+                '_id': self.id,
+                'name': 'russell',
+                'password': '123456',
+                'date_joined': '2014-09-27 00:00:00'
+            }]
         )
 
     def test_post(self):
-        data = {'name': 'tracey', 'password': '123456'}
+        data = {
+            'name': 'tracey',
+            'password': '123456',
+            'date_joined': 'datetime(2014-09-27 00:00:00)'
+        }
         resp = requests.post(URI, data=json.dumps(data), headers=self.headers)
 
         # validate response
@@ -51,12 +64,17 @@ class MongoUserTest(unittest.TestCase):
             {
                 '_id': ObjectId(_id),
                 'name': 'tracey',
-                'password': '123456'
+                'password': '123456',
+                'date_joined': datetime(2014, 9, 27)
             }
         )
 
     def test_put(self):
-        data = {'name': 'russellluo', 'password': '12345678'}
+        data = {
+            'name': 'russellluo',
+            'password': '12345678',
+            'date_joined': 'datetime(2014-09-28 00:00:00)'
+        }
         resp = requests.put('%s%s/' % (URI, self.id),
                             data=json.dumps(data), headers=self.headers)
 
@@ -71,12 +89,17 @@ class MongoUserTest(unittest.TestCase):
             {
                 '_id': ObjectId(self.id),
                 'name': 'russellluo',
-                'password': '12345678'
+                'password': '12345678',
+                'date_joined': datetime(2014, 9, 28)
             }
         )
 
     def test_patch(self):
-        data = [{'op': 'add', 'path': '/password', 'value': '123**678'}]
+        data = [
+            {'op': 'add', 'path': '/password', 'value': '123**678'},
+            {'op': 'add', 'path': '/date_joined',
+             'value': 'datetime(2014-09-28 22:00:00)'}
+        ]
         resp = requests.patch('%s%s/' % (URI, self.id),
                                data=json.dumps(data), headers=self.headers)
 
@@ -88,10 +111,13 @@ class MongoUserTest(unittest.TestCase):
         user = self.db.user.find_one({'_id': ObjectId(self.id)})
         self.assertTrue(bool(user))
         self.assertEqual(user['password'], '123**678')
+        self.assertEqual(user['date_joined'], datetime(2014, 9, 28, 22))
 
     def test_delete(self):
         _id = str(self.db.user.insert({
-            'name': 'tracey2076', 'password': '123456'
+            'name': 'tracey2076',
+            'password': '123456',
+            'date_joined': datetime(2014, 9, 27)
         }))
         resp = requests.delete('%s%s/' % (URI, _id))
 
