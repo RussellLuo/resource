@@ -31,14 +31,87 @@ def serialized(arg=None):
 
 class View(object):
 
-    def __init__(self, form_cls, serializer, **kwargs):
+    def __init__(self, uri, form_cls, serializer, **kwargs):
+        self.uri = uri
         self.form_cls = form_cls
         self.serializer = serializer
         self.__dict__.update(kwargs)
 
+    def get_pagination_args(self, filter_):
+        PAGE = 1
+        PER_PAGE = 10
+        try:
+            page = int(filter_.pop('page', None))
+            per_page = int(filter_.pop('per_page', None))
+            if page < 1:
+                page = PAGE
+            if per_page < 1:
+                per_page = PER_PAGE
+        except Exception:
+            page = PAGE
+            per_page = PER_PAGE
+        return page, per_page
+
+    def make_pagination_headers(self, page, per_page, count):
+        headers = {}
+
+        div, mod = divmod(count, per_page)
+        page_count = div + int(mod > 0)
+
+        links = []
+
+        def add_link(page, per_page, rel):
+            args = (self.uri, page, per_page, rel)
+            links.append('<%s?page=%s&per_page=%s>; rel="%s"' % args)
+
+        def add_prev_link():
+            add_link(page - 1, per_page, 'prev')
+
+        def add_next_link():
+            add_link(page + 1, per_page, 'next')
+
+        def add_first_link():
+            add_link(1, per_page, 'first')
+
+        def add_last_link():
+            add_link(page_count, per_page, 'last')
+
+        # fill `Link` headers
+        if page != page_count:
+            if page == 1:
+                add_next_link()
+                add_last_link()
+            elif page < page_count:
+                add_prev_link()
+                add_next_link()
+                add_first_link()
+                add_last_link()
+            elif page == page_count:
+                add_prev_link()
+                add_first_link()
+            else:
+                add_link(page_count, per_page, 'prev')
+                add_first_link()
+                add_last_link()
+
+            headers.update({'Link': ', '.join(links)})
+
+        # fill `X-Pagination-Info` headers
+        args = (page, per_page, count)
+        headers.update({
+            'X-Pagination-Info': 'page=%s, per-page=%s, count=%s' % args
+        })
+
+        return headers
+
     @serialized('filter_')
     def get_proxy(self, pk=None, filter_=None):
-        return self.get(pk, filter_)
+        if pk is None:
+            filter_ = filter_ or {}
+            page, per_page = self.get_pagination_args(filter_)
+            return self.get_items(page, per_page, filter_)
+        else:
+            return self.get_item(pk)
 
     @serialized('data')
     def post_proxy(self, data):
@@ -56,7 +129,10 @@ class View(object):
     def delete_proxy(self, pk):
         return self.delete(pk)
 
-    def get(self, pk=None, filter_=None):
+    def get_items(self, page, per_page, filter_):
+        raise MethodNotAllowedError()
+
+    def get_item(self, pk):
         raise MethodNotAllowedError()
 
     def post(self, data):

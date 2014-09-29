@@ -15,6 +15,6 @@ class Resource(object):
                  serializer=Serializer, model=None, kwargs=None):
         kwargs = kwargs or {}
         self.name = name
-        self.view = view(form, serializer(), **kwargs)
         self.uri = uri or '/%s/' % name
+        self.view = view(self.uri, form, serializer(), **kwargs)
         self.model = model

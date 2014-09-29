@@ -46,14 +46,16 @@ class Table(View):
         for column, value in doc.items():
             setattr(row, column, value)
 
-    def get(self, pk=None, filter_=None):
-        if pk is None:
-            filter_ = filter_ or {}
-            rows = map(self.as_dict, self.engine.filter_by(**filter_))
-            return Response(rows)
-        else:
-            row = self.as_dict(self.get_row(pk))
-            return Response(row)
+    def get_items(self, page, per_page, filter_):
+        offset, limit = (page - 1) * per_page, per_page
+        rows = self.engine.filter_by(**filter_).offset(offset).limit(limit)
+        count = self.engine.filter_by(**filter_).count()
+        headers = self.make_pagination_headers(page, per_page, count)
+        return Response(map(self.as_dict, rows), headers=headers)
+
+    def get_item(self, pk):
+        row = self.as_dict(self.get_row(pk))
+        return Response(row)
 
     def post(self, data):
         form = self.form_cls(data)

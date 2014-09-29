@@ -44,8 +44,8 @@ def response(method):
     def decorator(*args, **kwargs):
         res = method(*args, **kwargs)
         content = json.dumps(res.content)
-        return app.make_response((content, res.status,
-                                 {'Content-Type': 'application/json'}))
+        res.headers.update({'Content-Type': 'application/json'})
+        return app.make_response((content, res.status, res.headers))
     return decorator
 
 

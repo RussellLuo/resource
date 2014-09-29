@@ -25,12 +25,15 @@ class Collection(View):
         else:
             raise NotFoundError()
 
-    def get(self, pk=None, filter_=None):
-        if pk is None:
-            filter_ = filter_ or {}
-            return Response(list(self.engine.find(filter_)))
-        else:
-            return Response(self.get_doc(pk))
+    def get_items(self, page, per_page, filter_):
+        skip, limit = (page - 1) * per_page, per_page
+        docs = self.engine.find(spec=filter_, skip=skip, limit=per_page)
+        count = self.engine.find(spec=filter_).count()
+        headers = self.make_pagination_headers(page, per_page, count)
+        return Response(list(docs), headers=headers)
+
+    def get_item(self, pk):
+        return Response(self.get_doc(pk))
 
     def post(self, data):
         form = self.form_cls(data)
