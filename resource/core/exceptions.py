@@ -30,3 +30,8 @@ class StatusCodeError(BaseError):
 class NotFoundError(StatusCodeError):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = 'Resource not found.'
+
+
+class MethodNotAllowedError(StatusCodeError):
+    status_code = status.HTTP_405_METHOD_NOT_ALLOWED
+    default_detail = 'Method not allowed.'

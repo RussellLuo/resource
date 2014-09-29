@@ -79,14 +79,26 @@ def make_view(view):
     return View
 
 
-def add_resource(app, resource, pk='pk'):
+def get_args(resource):
     uri = resource.uri
     endpoint = str(resource.name)
     view = make_view(resource.view)
     view_func = view.as_view(endpoint)
+    return uri, endpoint, view_func
+
+
+def add_resource(app, resource, pk='pk'):
+    uri, endpoint, view_func = get_args(resource)
 
     app.add_url_rule(uri, defaults={pk: None},
                      view_func=view_func, methods=['GET'])
     app.add_url_rule(uri, view_func=view_func, methods=['POST'])
     app.add_url_rule('%s<%s>/' % (uri, pk), view_func=view_func,
                      methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+
+
+def make_index(app, resource, pk='pk'):
+    uri, endpoint, view_func = get_args(resource)
+
+    app.add_url_rule(uri, defaults={pk: None},
+                     view_func=view_func, methods=['GET'])

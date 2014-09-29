@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .response import Response
-from .exceptions import BaseError
+from .exceptions import BaseError, MethodNotAllowedError
 
 
 def serialized(arg=None):
@@ -17,7 +17,7 @@ def serialized(arg=None):
             except BaseError as e:
                 return Response(e.detail, e.status_code)
 
-            # serialize special arguments from respsone
+            # serialize special arguments from response
             if isinstance(response.content, (list, tuple)):
                 response.content = map(self.serializer.serialize,
                                        response.content)
@@ -57,16 +57,16 @@ class View(object):
         return self.delete(pk)
 
     def get(self, pk=None, filter_=None):
-        raise NotImplementedError()
+        raise MethodNotAllowedError()
 
     def post(self, data):
-        raise NotImplementedError()
+        raise MethodNotAllowedError()
 
     def put(self, pk, data):
-        raise NotImplementedError()
+        raise MethodNotAllowedError()
 
     def patch(self, pk, data):
-        raise NotImplementedError()
+        raise MethodNotAllowedError()
 
     def delete(self, pk):
-        raise NotImplementedError()
+        raise MethodNotAllowedError()

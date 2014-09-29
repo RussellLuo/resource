@@ -8,8 +8,9 @@ from pymongo import MongoClient
 from flask import Flask
 
 from resource import Resource
+from resource.index import Index
 from resource.db.mongo import Collection, MongoSerializer
-from resource.contrib.framework.flask import add_resource
+from resource.contrib.framework.flask import add_resource, make_index
 
 
 DB = MongoClient().test
@@ -43,5 +44,9 @@ app = Flask(__name__)
 if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
+
+    index = Resource('index', Index, uri='/',
+                     kwargs={'resources': resources})
+    make_index(app, index)
 
     app.run(debug=True)
