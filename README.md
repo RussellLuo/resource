@@ -20,6 +20,12 @@ and you want to expose it to your users through a RESTful Web API. `Resource` is
 Features
 --------
 
++ Full range of CRUD operations
++ JSON all the time
++ Easy and Extensible Data Validation for POST/PUT/PATCH
++ Intelligent and Extensible Serializer
++ Filtering
++ Pagination
 + Support MongoDB
 + Support RDBMS (SQLite, MySQL, etc.)
 + Support Flask
@@ -28,6 +34,9 @@ Features
 Roadmap
 -------
 
++ Sorting
++ Authentication
++ HATEOAS
 + Documentation
 + Support Django
 
