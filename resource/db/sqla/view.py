@@ -46,7 +46,7 @@ class Table(View):
         for column, value in doc.items():
             setattr(row, column, value)
 
-    def get_items(self, page, per_page, filter_):
+    def get_list(self, page, per_page, filter_):
         offset, limit = (page - 1) * per_page, per_page
         rows = self.engine.filter_by(**filter_).offset(offset).limit(limit)
         count = self.engine.filter_by(**filter_).count()

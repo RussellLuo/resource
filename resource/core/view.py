@@ -106,12 +106,7 @@ class View(object):
 
     @serialized('filter_')
     def get_proxy(self, pk=None, filter_=None):
-        if pk is None:
-            filter_ = filter_ or {}
-            page, per_page = self.get_pagination_args(filter_)
-            return self.get_items(page, per_page, filter_)
-        else:
-            return self.get_item(pk)
+        return self.get(pk, filter_)
 
     @serialized('data')
     def post_proxy(self, data):
@@ -129,7 +124,15 @@ class View(object):
     def delete_proxy(self, pk):
         return self.delete(pk)
 
-    def get_items(self, page, per_page, filter_):
+    def get(self, pk=None, filter_=None):
+        if pk is None:
+            filter_ = filter_ or {}
+            page, per_page = self.get_pagination_args(filter_)
+            return self.get_list(page, per_page, filter_)
+        else:
+            return self.get_item(pk)
+
+    def get_list(self, page, per_page, filter_):
         raise MethodNotAllowedError()
 
     def get_item(self, pk):

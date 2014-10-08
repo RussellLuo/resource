@@ -14,5 +14,5 @@ class Index(View):
             for r in self.resources
         )
 
-    def get_items(self, page, per_page, filter_):
+    def get_list(self, page, per_page, filter_):
         return Response(list(self.links))

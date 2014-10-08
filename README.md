@@ -161,7 +161,21 @@ Please refer to [RFC 6902][1] for the exact `JSON Patch` syntax.
     $ curl http://127.0.0.1:5000/users/
     []
 
-For REST Client of `requests` version, see `tests.py`.
+
+Run Test
+--------
+
+    (env)$ # Set PYTHONPATH
+    (env)$ export PYTHONPATH=.
+
+    (env)$ # Run MongoDB demo
+    (env)$ # start mongodb server (e.g. sudo mongod)
+    (env)$ python demo/mongodb/settings.py
+
+    (env)$ # Run Test
+    (env)$ python tests.py
+
+**BTW**: For REST Client of `requests` version, see `tests.py`.
 
 
 [1]: http://tools.ietf.org/html/rfc6902

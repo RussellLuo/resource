@@ -25,7 +25,7 @@ class Collection(View):
         else:
             raise NotFoundError()
 
-    def get_items(self, page, per_page, filter_):
+    def get_list(self, page, per_page, filter_):
         skip, limit = (page - 1) * per_page, per_page
         docs = self.engine.find(spec=filter_, skip=skip, limit=per_page)
         count = self.engine.find(spec=filter_).count()
