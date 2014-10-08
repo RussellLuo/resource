@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .response import Response
-from .exceptions import BaseError, MethodNotAllowedError
+from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
 
 
 def serialized(arg=None):
@@ -104,6 +104,25 @@ class View(object):
 
         return headers
 
+    def get_sort_args(self, filter_):
+        sort = filter_.pop('sort', None)
+        if sort is None:
+            args = None
+        else:
+            args = [
+                (arg[1:], -1) if arg.startswith('-') else (arg, 1)
+                for arg in sort.split(',')
+            ]
+        return args
+
+    def get_fields_selected(self, filter_):
+        fields = filter_.pop('fields', None)
+        if fields is None:
+            selected = None
+        else:
+            selected = fields.split(',')
+        return selected
+
     @serialized('filter_')
     def get_proxy(self, pk=None, filter_=None):
         return self.get(pk, filter_)
@@ -124,15 +143,20 @@ class View(object):
     def delete_proxy(self, pk):
         return self.delete(pk)
 
+    def get_pk(self, pk):
+        raise NotFoundError()
+
     def get(self, pk=None, filter_=None):
         if pk is None:
             filter_ = filter_ or {}
             page, per_page = self.get_pagination_args(filter_)
-            return self.get_list(page, per_page, filter_)
+            sort = self.get_sort_args(filter_)
+            fields = self.get_fields_selected(filter_)
+            return self.get_list(page, per_page, sort, fields, filter_)
         else:
             return self.get_item(pk)
 
-    def get_list(self, page, per_page, filter_):
+    def get_list(self, page, per_page, sort, fields, filter_):
         raise MethodNotAllowedError()
 
     def get_item(self, pk):

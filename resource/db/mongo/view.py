@@ -25,9 +25,25 @@ class Collection(View):
         else:
             raise NotFoundError()
 
-    def get_list(self, page, per_page, filter_):
+    def to_mongo_fields(self, fields):
+        if fields is None:
+            return None
+
+        mongo_fields = {
+            field_name: True
+            for field_name in fields
+        }
+        if fields and '_id' not in fields:
+            mongo_fields.update({'_id': False})
+        return mongo_fields
+
+    def get_list(self, page, per_page, sort, fields, filter_):
         skip, limit = (page - 1) * per_page, per_page
-        docs = self.engine.find(spec=filter_, skip=skip, limit=per_page)
+        fields = self.to_mongo_fields(fields)
+        docs = self.engine.find(
+            spec=filter_, skip=skip, limit=limit,
+            sort=sort, fields=fields
+        )
         count = self.engine.find(spec=filter_).count()
         headers = self.make_pagination_headers(page, per_page, count)
         return Response(list(docs), headers=headers)

@@ -26,6 +26,8 @@ Features
 + Intelligent and Extensible Serializer
 + Filtering
 + Pagination
++ Sorting
++ Fields Selection
 + Support MongoDB
 + Support RDBMS (SQLite, MySQL, etc.)
 + Support Flask
@@ -77,6 +79,9 @@ Run REST Server
     ]
 
 ### 3. run demo server
+
+    (env)$ # Set PYTHONPATH
+    (env)$ export PYTHONPATH=.
 
     (env)$ # Run MongoDB demo
     (env)$ # start mongodb server (e.g. sudo mongod)
@@ -165,17 +170,21 @@ Please refer to [RFC 6902][1] for the exact `JSON Patch` syntax.
 Run Test
 --------
 
-    (env)$ # Set PYTHONPATH
-    (env)$ export PYTHONPATH=.
+### Test Mongo
 
     (env)$ # Run MongoDB demo
-    (env)$ # start mongodb server (e.g. sudo mongod)
-    (env)$ python demo/mongodb/settings.py
 
     (env)$ # Run Test
-    (env)$ python tests.py
+    (env)$ python tests/test_mongo.py
 
-**BTW**: For REST Client of `requests` version, see `tests.py`.
+### Test Sqla
+
+    (env)$ # Run SQLite demo
+
+    (env)$ # Run Test
+    (env)$ python tests/test_sqla.py
+
+**BTW**: For REST Client of `requests` version, see `tests`.
 
 
 [1]: http://tools.ietf.org/html/rfc6902

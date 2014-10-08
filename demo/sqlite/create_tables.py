@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import (
-    create_engine,
-    Column, Integer, String
+    create_engine, Column,
+    Integer, String, DateTime
 )
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -15,6 +15,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     password = Column(String(50))
+    date_joined = Column(DateTime())
 
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///sqlite.db'

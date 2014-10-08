@@ -36,22 +36,45 @@ class Table(View):
         else:
             raise NotFoundError()
 
-    def as_dict(self, row):
+    def as_dict(self, row, fields=None):
+        columns = self.engine._table.columns
+        if fields is not None:
+            columns = [c for c in columns if c.name in fields]
+
         return {
             column.name: getattr(row, column.name, None)
-            for column in self.engine._table.columns
+            for column in columns
         }
 
     def from_dict(self, row, doc):
         for column, value in doc.items():
             setattr(row, column, value)
 
-    def get_list(self, page, per_page, filter_):
+    def to_sqla_sort(self, sort):
+        columns = self.engine._table.columns
+        sqla_sort = []
+        if sort is not None:
+            for field_name, order in sort:
+                field = getattr(columns, field_name)
+                if order == -1:
+                    field = field.desc()
+                sqla_sort.append(field)
+        return sqla_sort
+
+    def get_list(self, page, per_page, sort, fields, filter_):
         offset, limit = (page - 1) * per_page, per_page
-        rows = self.engine.filter_by(**filter_).offset(offset).limit(limit)
+        sort = self.to_sqla_sort(sort)
+
+        rows = (self.engine.filter_by(**filter_)
+                               .order_by(*sort)
+                               .offset(offset)
+                               .limit(limit))
+
         count = self.engine.filter_by(**filter_).count()
+
+        content = [self.as_dict(row, fields) for row in rows]
         headers = self.make_pagination_headers(page, per_page, count)
-        return Response(map(self.as_dict, rows), headers=headers)
+        return Response(content, headers=headers)
 
     def get_item(self, pk):
         row = self.as_dict(self.get_row(pk))

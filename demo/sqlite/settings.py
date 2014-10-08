@@ -9,7 +9,7 @@ from flask import Flask
 
 from resource import Resource
 from resource.index import Index
-from resource.db.sqla import Table
+from resource.db.sqla import Table, SqlaSerializer
 from resource.contrib.framework.flask import add_resource, make_index
 
 
@@ -33,6 +33,7 @@ class UserForm(JsonForm):
 
 resources = [
     Resource('users', Table, form=UserForm,
+             serializer=SqlaSerializer,
              kwargs={'db': DB, 'table': 'user'})
 ]
 

@@ -24,6 +24,15 @@ class MongoUserTest(unittest.TestCase):
             'date_joined': datetime(2014, 9, 27)
         }))
 
+        self.extra_ids = [
+            str(self.db.user.insert({
+                'name': 'user_%d' % i,
+                'password': '123456',
+                'date_joined': datetime(2014, 10, i)
+            }))
+            for i in xrange(1, 9)
+        ]
+
         self.headers = {'content-type': 'application/json'}
 
     def tearDown(self):
@@ -34,15 +43,65 @@ class MongoUserTest(unittest.TestCase):
 
         # validate response
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(resp.json()), 9)
+
+    def test_get_filter(self):
+        query_string = ['name=user_1']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+
+        # validate response
+        self.assertEqual(resp.status_code, 200)
         self.assertEqual(
             resp.json(),
             [{
-                '_id': self.id,
-                'name': 'russell',
+                '_id': self.extra_ids[0],
+                'name': 'user_1',
                 'password': '123456',
-                'date_joined': '2014-09-27 00:00:00'
+                'date_joined': '2014-10-01 00:00:00'
             }]
         )
+
+    def test_get_sort(self):
+        query_string = ['sort=date_joined']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+
+        # validate response
+        self.assertEqual(resp.status_code, 200)
+        expection = [{
+            '_id': self.id,
+            'name': 'russell',
+            'password': '123456',
+            'date_joined': '2014-09-27 00:00:00'
+        }]
+        expection.extend([
+            {
+                '_id': self.extra_ids[i - 1],
+                'name': 'user_%d' % i,
+                'password': '123456',
+                'date_joined': '2014-10-0%d 00:00:00' % i
+            }
+            for i in xrange(1, 9)
+        ])
+        self.assertEqual(resp.json(), expection)
+
+    def test_get_fields(self):
+        query_string = ['sort=date_joined', 'fields=name,password']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+
+        # validate response
+        self.assertEqual(resp.status_code, 200)
+        expection = [{
+            'name': 'russell',
+            'password': '123456',
+        }]
+        expection.extend([
+            {
+                'name': 'user_%d' % i,
+                'password': '123456',
+            }
+            for i in xrange(1, 9)
+        ])
+        self.assertEqual(resp.json(), expection)
 
     def test_post(self):
         data = {
