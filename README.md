@@ -36,7 +36,9 @@ Features
 Roadmap
 -------
 
-+ Sorting
++ Enhance Filtering
++ Use [automap][2] instead of [SQLSoup][3] (which is obsolete)
++ Default/Custom Settings
 + Authentication
 + HATEOAS
 + Documentation
@@ -188,3 +190,5 @@ Run Test
 
 
 [1]: http://tools.ietf.org/html/rfc6902
+[2]: http://docs.sqlalchemy.org/en/latest/orm/extensions/automap.html
+[3]: https://sqlsoup.readthedocs.org/en/latest/index.html
