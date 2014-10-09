@@ -40,16 +40,21 @@ class View(object):
     def get_pagination_args(self, filter_):
         PAGE = 1
         PER_PAGE = 10
+
         try:
             page = int(filter_.pop('page', None))
-            per_page = int(filter_.pop('per_page', None))
             if page < 1:
                 page = PAGE
+        except Exception:
+            page = PAGE
+
+        try:
+            per_page = int(filter_.pop('per_page', None))
             if per_page < 1:
                 per_page = PER_PAGE
         except Exception:
-            page = PAGE
             per_page = PER_PAGE
+
         return page, per_page
 
     def make_pagination_headers(self, page, per_page, count):
