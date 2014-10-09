@@ -3,5 +3,6 @@ jsonpatch==1.7
 pymongo==2.7.2
 SQLAlchemy==0.9.7
 sqlsoup==0.9.0
+Sphinx==1.2.3
 requests==2.4.1
 Flask==0.10.1
