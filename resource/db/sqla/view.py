@@ -66,9 +66,9 @@ class Table(View):
         sort = self.to_sqla_sort(sort)
 
         rows = (self.engine.filter_by(**filter_)
-                               .order_by(*sort)
-                               .offset(offset)
-                               .limit(limit))
+                           .order_by(*sort)
+                           .offset(offset)
+                           .limit(limit))
 
         count = self.engine.filter_by(**filter_).count()
 
