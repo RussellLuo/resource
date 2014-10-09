@@ -54,7 +54,7 @@ Run REST Server
     $ source env/bin/activate
     (env)$ pip install -r requirements.txt
 
-### 2. configure resources in your `settings.py`
+### 2. configure resources in your application
 
     from pymongo import MongoClient
     from jsonform import JsonForm
@@ -86,11 +86,11 @@ Run REST Server
 
     (env)$ # Run MongoDB demo
     (env)$ # start mongodb server (e.g. sudo mongod)
-    (env)$ python demo/mongodb/settings.py
+    (env)$ python demo/mongodb/runserver.py
 
     (env)$ # Run SQLite demo
     (env)$ python demo/sqlite/create_tables.py
-    (env)$ python demo/sqlite/settings.py
+    (env)$ python demo/sqlite/runserver.py
 
 Use REST Client
 ---------------
