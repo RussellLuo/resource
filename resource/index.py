@@ -3,7 +3,7 @@
 
 from operator import itemgetter
 
-from resource import View, Response
+from resource import settings, View, Response
 
 
 class Index(View):
@@ -12,7 +12,7 @@ class Index(View):
     def __init__(self, *arg, **kwargs):
         super(Index, self).__init__(*arg, **kwargs)
         self.links = [
-            {'href': r.uri, 'title': r.name}
+            {'href': settings.DOMAIN_NAME + r.uri, 'title': r.name}
             for r in self.resources
         ]
 

@@ -5,20 +5,18 @@ from datetime import datetime
 
 from bson import ObjectId
 
-from resource import Serializer
-
-
-DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+from resource import settings, Serializer
 
 
 class MongoSerializer(Serializer):
 
     serialize_schema = {
         ObjectId: lambda value: str(value),
-        datetime: lambda value: value.strftime(DATE_FORMAT)
+        datetime: lambda value: value.strftime(settings.DATE_FORMAT)
     }
 
     deserialize_schema = {
         'objectid': lambda value: ObjectId(value),
-        'datetime': lambda value: datetime.strptime(value, DATE_FORMAT)
+        'datetime': lambda value: datetime.strptime(value,
+                                                    settings.DATE_FORMAT)
     }

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from .conf import settings
 from .response import Response
 from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
 
@@ -66,8 +67,8 @@ class View(object):
         links = []
 
         def add_link(page, per_page, rel):
-            args = (self.uri, page, per_page, rel)
-            links.append('<%s?page=%s&per_page=%s>; rel="%s"' % args)
+            args = (settings.DOMAIN_NAME, self.uri, page, per_page, rel)
+            links.append('<%s%s?page=%s&per_page=%s>; rel="%s"' % args)
 
         def add_prev_link():
             add_link(page - 1, per_page, 'prev')

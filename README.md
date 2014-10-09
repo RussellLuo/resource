@@ -38,7 +38,6 @@ Roadmap
 
 + Enhance Filtering
 + Use [automap][2] instead of [SQLSoup][3] (which is obsolete)
-+ Default/Custom Settings
 + Authentication
 + HATEOAS
 + Documentation
