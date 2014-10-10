@@ -57,7 +57,7 @@ class MongoUserTest(unittest.TestCase):
                 '_id': self.extra_ids[0],
                 'name': 'user_1',
                 'password': '123456',
-                'date_joined': '2014-10-01 00:00:00'
+                'date_joined': '2014-10-01T00:00:00Z'
             }]
         )
 
@@ -71,14 +71,14 @@ class MongoUserTest(unittest.TestCase):
             '_id': self.id,
             'name': 'russell',
             'password': '123456',
-            'date_joined': '2014-09-27 00:00:00'
+            'date_joined': '2014-09-27T00:00:00Z'
         }]
         expection.extend([
             {
                 '_id': self.extra_ids[i - 1],
                 'name': 'user_%d' % i,
                 'password': '123456',
-                'date_joined': '2014-10-0%d 00:00:00' % i
+                'date_joined': '2014-10-0%dT00:00:00Z' % i
             }
             for i in xrange(1, 9)
         ])
@@ -107,7 +107,7 @@ class MongoUserTest(unittest.TestCase):
         data = {
             'name': 'tracey',
             'password': '123456',
-            'date_joined': 'datetime(2014-09-27 00:00:00)'
+            'date_joined': 'datetime(2014-09-27T00:00:00Z)'
         }
         resp = requests.post(URI, data=json.dumps(data), headers=self.headers)
 
@@ -132,7 +132,7 @@ class MongoUserTest(unittest.TestCase):
         data = {
             'name': 'russellluo',
             'password': '12345678',
-            'date_joined': 'datetime(2014-09-28 00:00:00)'
+            'date_joined': 'datetime(2014-09-28T00:00:00Z)'
         }
         resp = requests.put('%s%s/' % (URI, self.id),
                             data=json.dumps(data), headers=self.headers)
@@ -157,7 +157,7 @@ class MongoUserTest(unittest.TestCase):
         data = [
             {'op': 'add', 'path': '/password', 'value': '123**678'},
             {'op': 'add', 'path': '/date_joined',
-             'value': 'datetime(2014-09-28 22:00:00)'}
+             'value': 'datetime(2014-09-28T22:00:00Z)'}
         ]
         resp = requests.patch('%s%s/' % (URI, self.id),
                                data=json.dumps(data), headers=self.headers)
