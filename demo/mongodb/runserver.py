@@ -34,7 +34,7 @@ class UserForm(JsonForm):
 resources = [
     Resource('users', Collection, form=UserForm,
              serializer=MongoSerializer,
-             kwargs={'engine': DB['user']})
+             kwargs={'db': DB, 'table_name': 'user'})
 ]
 
 

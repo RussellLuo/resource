@@ -17,10 +17,10 @@ class Table(View):
         super(Table, self).__init__(*arg, **kwargs)
         self.db = sqlsoup.SQLSoup(self.db)
         try:
-            self.engine = getattr(self.db, self.table, None)
+            self.engine = getattr(self.db, self.table_name, None)
         except sqlalchemy.exc.NoSuchTableError:
             raise BaseError(
-                '"%s" has no table named `%s`' % (self.db, self.table)
+                '"%s" has no table named `%s`' % (self.db, self.table_name)
             )
 
     def get_pk(self, pk):

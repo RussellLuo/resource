@@ -34,7 +34,7 @@ class UserForm(JsonForm):
 resources = [
     Resource('users', Table, form=UserForm,
              serializer=SqlaSerializer,
-             kwargs={'db': DB, 'table': 'user'})
+             kwargs={'db': DB, 'table_name': 'user'})
 ]
 
 

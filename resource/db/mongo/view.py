@@ -12,6 +12,10 @@ from resource.utils import get_exception_detail
 class Collection(View):
     """For MongoDB (NoSQL)."""
 
+    def __init__(self, *arg, **kwargs):
+        super(Collection, self).__init__(*arg, **kwargs)
+        self.engine = self.db[self.table_name]
+
     def get_pk(self, pk):
         try:
             return bson.ObjectId(pk)
