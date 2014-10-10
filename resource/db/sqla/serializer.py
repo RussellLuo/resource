@@ -1,18 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
-from resource import settings, Serializer
+from resource import Serializer
+from resource.shared_schema import (
+    get_serialize_schema, get_deserialize_schema
+)
 
 
 class SqlaSerializer(Serializer):
 
-    serialize_schema = {
-        datetime: lambda value: value.strftime(settings.DATE_FORMAT)
-    }
+    serialize_schema = get_serialize_schema(['datetime'])
 
-    deserialize_schema = {
-        'datetime': lambda value: datetime.strptime(value,
-                                                    settings.DATE_FORMAT)
-    }
+    deserialize_schema = get_deserialize_schema(['int', 'bool', 'datetime'])

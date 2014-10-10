@@ -1,22 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
-from bson import ObjectId
-
-from resource import settings, Serializer
+from resource import Serializer
+from resource.shared_schema import (
+    get_serialize_schema, get_deserialize_schema
+)
 
 
 class MongoSerializer(Serializer):
 
-    serialize_schema = {
-        ObjectId: lambda value: str(value),
-        datetime: lambda value: value.strftime(settings.DATE_FORMAT)
-    }
+    serialize_schema = get_serialize_schema(['objectid', 'datetime'])
 
-    deserialize_schema = {
-        'objectid': lambda value: ObjectId(value),
-        'datetime': lambda value: datetime.strptime(value,
-                                                    settings.DATE_FORMAT)
-    }
+    deserialize_schema = get_deserialize_schema([
+        'int', 'bool', 'objectid', 'datetime'
+    ])
