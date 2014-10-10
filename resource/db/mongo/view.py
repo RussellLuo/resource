@@ -41,14 +41,14 @@ class Collection(View):
             mongo_fields.update({'_id': False})
         return mongo_fields
 
-    def get_list(self, page, per_page, sort, fields, filter_):
+    def get_list(self, page, per_page, sort, fields, lookup):
         skip, limit = (page - 1) * per_page, per_page
         fields = self.to_mongo_fields(fields)
         docs = self.engine.find(
-            spec=filter_, skip=skip, limit=limit,
+            spec=lookup, skip=skip, limit=limit,
             sort=sort, fields=fields
         )
-        count = self.engine.find(spec=filter_).count()
+        count = self.engine.find(spec=lookup).count()
         headers = self.make_pagination_headers(page, per_page, count)
         return Response(list(docs), headers=headers)
 

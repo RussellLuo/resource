@@ -54,8 +54,8 @@ def make_view(view):
 
         @response
         def get(self, pk=None):
-            filter_ = request.args.to_dict()
-            return view.get_proxy(pk=pk, filter_=filter_)
+            args = request.args.to_dict()
+            return view.get_proxy(pk=pk, query_params=args)
 
         @response
         def post(self):

@@ -16,11 +16,11 @@ class Index(View):
             for r in self.resources
         ]
 
-    def do_filtering(self, content, filter_):
+    def do_filtering(self, content, lookup):
         def filterer(item):
             condition = [
                 item.get(k) == v
-                for k, v in filter_.items()
+                for k, v in lookup.items()
             ]
             return all(condition)
         return filter(filterer, content)
@@ -65,8 +65,8 @@ class Index(View):
             for item in content
         ]
 
-    def get_list(self, page, per_page, sort, fields, filter_):
-        content = self.do_filtering(self.links, filter_)
+    def get_list(self, page, per_page, sort, fields, lookup):
+        content = self.do_filtering(self.links, lookup)
         count = len(content)
 
         content = self.do_paginating(content, page, per_page)

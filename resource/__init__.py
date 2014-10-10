@@ -7,3 +7,4 @@ from .core.view import View
 from .core.response import Response
 from .core import status
 from .core.serializer import Serializer
+from .core.filter import Filter

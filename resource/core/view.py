@@ -32,25 +32,26 @@ def serialized(arg=None):
 
 class View(object):
 
-    def __init__(self, uri, form_cls, serializer, **kwargs):
+    def __init__(self, uri, form_cls, serializer_cls, filter_cls, **kwargs):
         self.uri = uri
         self.form_cls = form_cls
-        self.serializer = serializer
+        self.serializer = serializer_cls()
+        self.filter = filter_cls(**kwargs)
         self.__dict__.update(kwargs)
 
-    def get_pagination_args(self, filter_):
+    def get_pagination_args(self, query_params):
         PAGE = 1
         PER_PAGE = settings.PER_PAGE
 
         try:
-            page = int(filter_.pop('page', None))
+            page = int(query_params.pop('page', None))
             if page < 1:
                 page = PAGE
         except Exception:
             page = PAGE
 
         try:
-            per_page = int(filter_.pop('per_page', None))
+            per_page = int(query_params.pop('per_page', None))
             if per_page < 1:
                 per_page = PER_PAGE
         except Exception:
@@ -110,8 +111,8 @@ class View(object):
 
         return headers
 
-    def get_sort_args(self, filter_):
-        sort = filter_.pop('sort', None)
+    def get_sort_args(self, query_params):
+        sort = query_params.pop('sort', None)
         if sort is None:
             args = None
         else:
@@ -121,17 +122,17 @@ class View(object):
             ]
         return args
 
-    def get_fields_selected(self, filter_):
-        fields = filter_.pop('fields', None)
+    def get_fields_selected(self, query_params):
+        fields = query_params.pop('fields', None)
         if fields is None:
             selected = None
         else:
             selected = fields.split(',')
         return selected
 
-    @serialized('filter_')
-    def get_proxy(self, pk=None, filter_=None):
-        return self.get(pk, filter_)
+    @serialized('query_params')
+    def get_proxy(self, pk=None, query_params=None):
+        return self.get(pk, query_params)
 
     @serialized('data')
     def post_proxy(self, data):
@@ -152,17 +153,18 @@ class View(object):
     def get_pk(self, pk):
         raise NotFoundError()
 
-    def get(self, pk=None, filter_=None):
+    def get(self, pk=None, query_params=None):
         if pk is None:
-            filter_ = filter_ or {}
-            page, per_page = self.get_pagination_args(filter_)
-            sort = self.get_sort_args(filter_)
-            fields = self.get_fields_selected(filter_)
-            return self.get_list(page, per_page, sort, fields, filter_)
+            query_params = query_params or {}
+            page, per_page = self.get_pagination_args(query_params)
+            sort = self.get_sort_args(query_params)
+            fields = self.get_fields_selected(query_params)
+            lookup = self.filter.query(query_params)
+            return self.get_list(page, per_page, sort, fields, lookup)
         else:
             return self.get_item(pk)
 
-    def get_list(self, page, per_page, sort, fields, filter_):
+    def get_list(self, page, per_page, sort, fields, lookup):
         raise MethodNotAllowedError()
 
     def get_item(self, pk):

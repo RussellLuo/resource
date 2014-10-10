@@ -53,9 +53,9 @@ class SqlaUserTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json()), 9)
 
-    def test_get_filter(self):
-        query_string = ['name=user_1']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+    def test_get_by_simple_filter(self):
+        query_params = ['name=user_1']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -69,9 +69,26 @@ class SqlaUserTest(unittest.TestCase):
             }]
         )
 
-    def test_get_sort(self):
-        query_string = ['sort=date_joined']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+    def test_get_by_complex_filter(self):
+        query_params = ['date_joined_gt=datetime(2014-10-01T00:00:00Z)',
+                        'date_joined_lt=datetime(2014-10-03T00:00:00Z)']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
+
+        # validate response
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            resp.json(),
+            [{
+                'id': self.extra_ids[1],
+                'name': 'user_2',
+                'password': '123456',
+                'date_joined': '2014-10-02T00:00:00Z'
+            }]
+        )
+
+    def test_get_by_sort(self):
+        query_params = ['sort=date_joined']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -92,9 +109,9 @@ class SqlaUserTest(unittest.TestCase):
         ])
         self.assertEqual(resp.json(), expection)
 
-    def test_get_fields(self):
-        query_string = ['sort=date_joined', 'fields=name,password']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_string)))
+    def test_get_by_fields(self):
+        query_params = ['sort=date_joined', 'fields=name,password']
+        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
 
         # validate response
         self.assertEqual(resp.status_code, 200)

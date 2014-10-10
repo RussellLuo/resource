@@ -7,7 +7,7 @@ from jsonform import JsonForm
 from sqlalchemy import create_engine
 from flask import Flask
 
-from resource import Resource
+from resource import Resource, Filter
 from resource.index import Index
 from resource.db.sqla import Table, SqlaSerializer
 from resource.contrib.framework.flask import add_resource, make_index
@@ -31,9 +31,28 @@ class UserForm(JsonForm):
     }
 
 
+class UserFilter(Filter):
+    def query_date_range(self, query_params):
+        date_joined_gt = query_params.pop('date_joined_gt', None)
+        date_joined_lt = query_params.pop('date_joined_lt', None)
+
+        conditions = {}
+
+        if date_joined_gt:
+            conditions.update({'$gt': date_joined_gt})
+
+        if date_joined_lt:
+            conditions.update({'$lt': date_joined_lt})
+
+        if conditions:
+            return {'date_joined': conditions}
+        else:
+            return {}
+
+
 resources = [
-    Resource('users', Table, form=UserForm,
-             serializer=SqlaSerializer,
+    Resource('users', Table, form_cls=UserForm,
+             serializer_cls=SqlaSerializer, filter_cls=UserFilter,
              kwargs={'db': DB, 'table_name': 'user'})
 ]
 

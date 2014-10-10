@@ -3,7 +3,10 @@
 
 import sqlsoup
 import sqlalchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
 from jsonpatch import JsonPatch
+from mongosql import MongoQuery
 
 from resource import View, Response, status
 from resource.core.exceptions import BaseError, NotFoundError
@@ -15,6 +18,12 @@ class Table(View):
 
     def __init__(self, *arg, **kwargs):
         super(Table, self).__init__(*arg, **kwargs)
+
+        base = automap_base()
+        base.prepare(self.db, reflect=True)
+        self.session = Session(self.db)
+        self.model = getattr(base.classes, self.table_name)
+
         self.db = sqlsoup.SQLSoup(self.db)
         try:
             self.engine = getattr(self.db, self.table_name, None)
@@ -51,26 +60,21 @@ class Table(View):
             setattr(row, column, value)
 
     def to_sqla_sort(self, sort):
-        columns = self.engine._table.columns
-        sqla_sort = []
-        if sort is not None:
-            for field_name, order in sort:
-                field = getattr(columns, field_name)
-                if order == -1:
-                    field = field.desc()
-                sqla_sort.append(field)
-        return sqla_sort
+        if sort is None:
+            return None
+        return [
+            '%s%s' % (field_name, '-' if order == -1 else '+')
+            for field_name, order in sort
+        ]
 
-    def get_list(self, page, per_page, sort, fields, filter_):
-        offset, limit = (page - 1) * per_page, per_page
+    def get_list(self, page, per_page, sort, fields, lookup):
+        skip, limit = (page - 1) * per_page, per_page
         sort = self.to_sqla_sort(sort)
 
-        rows = (self.engine.filter_by(**filter_)
-                           .order_by(*sort)
-                           .offset(offset)
-                           .limit(limit))
-
-        count = self.engine.filter_by(**filter_).count()
+        mq = MongoQuery.get_for(self.model, self.session.query(self.model))
+        query = mq.filter(lookup or None)
+        rows = query.sort(sort).limit(limit, skip).end()
+        count = query.end().count()
 
         content = [self.as_dict(row, fields) for row in rows]
         headers = self.make_pagination_headers(page, per_page, count)
