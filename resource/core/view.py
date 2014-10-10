@@ -40,7 +40,7 @@ class View(object):
 
     def get_pagination_args(self, filter_):
         PAGE = 1
-        PER_PAGE = 10
+        PER_PAGE = settings.PER_PAGE
 
         try:
             page = int(filter_.pop('page', None))
