@@ -6,45 +6,56 @@ from datetime import datetime
 
 import requests
 import json
-import sqlsoup
 from sqlalchemy import create_engine
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
 
 
 URI = 'http://127.0.0.1:5000/users/'
 
 
+# Increase connection timeout of SQlite
+# see http://stackoverflow.com/questions/15065037/how-to-increase-connection-timeout-using-sqlalchemy-with-sqlite-in-python
+engine = create_engine(
+    'sqlite:///sqlite.db', connect_args={'timeout': 10}
+)
+base = automap_base()
+base.prepare(engine, reflect=True)
+User = base.classes.user
+
+
 class SqlaUserTest(unittest.TestCase):
 
-    def setUp(self):
-        # increase connection timeout of SQlite
-        # see http://stackoverflow.com/questions/15065037/how-to-increase-connection-timeout-using-sqlalchemy-with-sqlite-in-python
-        self.db = sqlsoup.SQLSoup(create_engine(
-            'sqlite:///sqlite.db', connect_args={'timeout': 15}
-        ))
+    def add_row(self, **kwargs):
+        obj = User(**kwargs)
+        self.session.add(obj)
+        self.session.commit()
+        return obj.id
 
-        row = self.db.user.insert(
+    def setUp(self):
+        self.session = Session(engine)
+        self.query = self.session.query(User)
+
+        self.id = self.add_row(
             name='russell',
             password='123456',
             date_joined=datetime(2014, 9, 27)
         )
-        self.db.commit()
-        self.id = row.id
 
         self.extra_ids = []
         for i in xrange(1, 9):
-            row = self.db.user.insert(
+            id = self.add_row(
                 name='user_%d' % i,
                 password='123456',
                 date_joined=datetime(2014, 10, i)
             )
-            self.db.commit()
-            self.extra_ids.append(row.id)
+            self.extra_ids.append(id)
 
         self.headers = {'content-type': 'application/json'}
 
     def tearDown(self):
-        self.db.user.delete()
-        self.db.commit()
+        self.query.delete()
+        self.session.commit()
 
     def test_get(self):
         resp = requests.get(URI)
@@ -141,9 +152,9 @@ class SqlaUserTest(unittest.TestCase):
         self.assertTrue('id' in resp.json())
 
         # validate database
-        _id = int(resp.json()['id'])
-        user = self.db.user.filter_by(id=_id).first()
-        self.assertEqual(user.id, _id)
+        id = int(resp.json()['id'])
+        user = self.query.get(id)
+        self.assertEqual(user.id, id)
         self.assertEqual(user.name, 'tracey')
         self.assertEqual(user.password, '123456')
         self.assertEqual(user.date_joined, datetime(2014, 9, 27))
@@ -162,7 +173,7 @@ class SqlaUserTest(unittest.TestCase):
         self.assertEqual(resp.text, '')
 
         # validate database
-        user = self.db.user.filter_by(id=self.id).first()
+        user = self.query.get(self.id)
         self.assertEqual(user.id, self.id)
         self.assertEqual(user.name, 'russellluo')
         self.assertEqual(user.password, '12345678')
@@ -182,27 +193,25 @@ class SqlaUserTest(unittest.TestCase):
         self.assertEqual(resp.text, '')
 
         # validate database
-        user = self.db.user.filter_by(id=self.id).first()
+        user = self.query.get(self.id)
         self.assertTrue(bool(user))
         self.assertEqual(user.password, '123**678')
         self.assertEqual(user.date_joined, datetime(2014, 9, 28, 22))
 
     def test_delete(self):
-        row = self.db.user.insert(
+        id = self.add_row(
             name='tracey2076',
             password='123456',
             date_joined=datetime(2014, 9, 27)
         )
-        self.db.commit()
-        _id = row.id
-        resp = requests.delete('%s%s/' % (URI, _id))
+        resp = requests.delete('%s%s/' % (URI, id))
 
         # validate response
         self.assertEqual(resp.status_code, 204)
         self.assertEqual(resp.text, '')
 
         # validate database
-        user = self.db.user.filter_by(id=_id).first()
+        user = self.query.get(id)
         self.assertFalse(bool(user))
 
 

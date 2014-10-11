@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sqlsoup
-import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from jsonpatch import JsonPatch
@@ -13,24 +11,26 @@ from resource.core.exceptions import BaseError, NotFoundError
 from resource.utils import get_exception_detail
 
 
+base = automap_base()
+
+
 class Table(View):
     """For RDBMS (SQL)."""
 
     def __init__(self, *arg, **kwargs):
         super(Table, self).__init__(*arg, **kwargs)
 
-        base = automap_base()
         base.prepare(self.db, reflect=True)
         self.session = Session(self.db)
-        self.model = getattr(base.classes, self.table_name)
 
-        self.db = sqlsoup.SQLSoup(self.db)
         try:
-            self.engine = getattr(self.db, self.table_name, None)
-        except sqlalchemy.exc.NoSuchTableError:
+            self.model = getattr(base.classes, self.table_name)
+        except AttributeError:
             raise BaseError(
                 '"%s" has no table named `%s`' % (self.db, self.table_name)
             )
+
+        self.query = self.session.query(self.model)
 
     def get_pk(self, pk):
         try:
@@ -39,14 +39,20 @@ class Table(View):
             raise NotFoundError()
 
     def get_row(self, pk):
-        row = self.engine.filter_by(id=self.get_pk(pk)).first()
+        row = self.query.get(self.get_pk(pk))
         if row:
             return row
         else:
             raise NotFoundError()
 
+    def add_row(self, doc):
+        obj = self.model(**doc)
+        self.session.add(obj)
+        self.session.commit()
+        return obj.id
+
     def as_dict(self, row, fields=None):
-        columns = self.engine._table.columns
+        columns = self.model.__table__.columns
         if fields is not None:
             columns = [c for c in columns if c.name in fields]
 
@@ -71,7 +77,7 @@ class Table(View):
         skip, limit = (page - 1) * per_page, per_page
         sort = self.to_sqla_sort(sort)
 
-        mq = MongoQuery.get_for(self.model, self.session.query(self.model))
+        mq = MongoQuery.get_for(self.model, self.query)
         query = mq.filter(lookup or None)
         rows = query.sort(sort).limit(limit, skip).end()
         count = query.end().count()
@@ -87,9 +93,8 @@ class Table(View):
     def post(self, data):
         form = self.form_cls(data)
         if form.is_valid():
-            row = self.engine.insert(**form.document)
-            self.db.commit()
-            return Response({'id': row.id}, status=status.HTTP_201_CREATED)
+            id = self.add_row(form.document)
+            return Response({'id': id}, status=status.HTTP_201_CREATED)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, pk, data):
@@ -97,9 +102,8 @@ class Table(View):
         if form.is_valid():
             doc = form.document
             doc.update({'id': self.get_pk(pk)})
-            self.engine.filter_by(id=doc['id']).delete()
-            self.engine.insert(**doc)
-            self.db.commit()
+            self.query.filter_by(id=doc['id']).delete()
+            self.add_row(doc)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -119,12 +123,12 @@ class Table(View):
         form = self.form_cls(doc)
         if form.is_valid():
             self.from_dict(row, doc)
-            self.db.commit()
+            self.session.commit()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, pk):
         row = self.get_row(pk)
-        self.db.delete(row)
-        self.db.commit()
+        self.session.delete(row)
+        self.session.commit()
         return Response(status=status.HTTP_204_NO_CONTENT)
