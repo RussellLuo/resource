@@ -36,8 +36,6 @@ Features
 Roadmap
 -------
 
-+ Enhance Filtering
-+ Use [automap][2] instead of [SQLSoup][3] (which is obsolete)
 + Authentication
 + HATEOAS
 + Documentation
@@ -76,7 +74,7 @@ Run REST Server
     resources = [
         Resource('users', Collection, form=UserForm,
                 serializer=MongoSerializer,
-                kwargs={'engine': DB['user']})
+                kwargs={'db': DB, 'table_name': 'user'})
     ]
 
 ### 3. run demo server
@@ -94,6 +92,8 @@ Run REST Server
 
 Use REST Client
 ---------------
+
+Take `user` table of `test` database of MongoDB for example.
 
 ### GET
 
@@ -118,51 +118,51 @@ Use REST Client
 
 ### POST
 
-    $ curl -i -H "Content-Type: application/json" -d '{"name": "russell"}' http://127.0.0.1:5000/users/
+    $ curl -i -H "Content-Type: application/json" -d '{"name": "russell", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users/
     HTTP/1.0 201 CREATED
     Content-Type: application/json
-    Content-Length: 2
+    Content-Length: 35
     Server: Werkzeug/0.9.6 Python/2.7.3
-    Date: Mon, 22 Sep 2014 05:55:37 GMT
+    Date: Sat, 11 Oct 2014 13:45:11 GMT
 
-    ""
+    {"_id": "543934671d41c812802711f3"}
     $ curl http://127.0.0.1:5000/users/
-    [{"_id": "541fb9d91d41c81a78f2dca4", "name": "russell"}]
+    [{"password": "123456", "date_joined": "2014-10-11T00:00:00Z", "name": "russell", "_id": "543934671d41c812802711f3"}]
 
 ### PUT
 
-    $ curl -i -X PUT -H "Content-Type: application/json" -d '{"name": "tracey"}' http://127.0.0.1:5000/users/541fb9d91d41c81a78f2dca4/
+    $ curl -i -X PUT -H "Content-Type: application/json" -d '{"name": "tracey", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users/543934671d41c812802711f3/
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
     Server: Werkzeug/0.9.6 Python/2.7.3
-    Date: Mon, 22 Sep 2014 05:58:45 GMT
+    Date: Sat, 11 Oct 2014 13:49:00 GMT
 
     $ curl http://127.0.0.1:5000/users/
-    [{"_id": "541fb9d91d41c81a78f2dca4", "name": "tracey"}]
+    [{"password": "123456", "date_joined": "2014-10-11T00:00:00Z", "name": "tracey", "_id": "543934671d41c812802711f3"}]
 
 ### PATCH
 
 Please refer to [RFC 6902][1] for the exact `JSON Patch` syntax.
 
-    $ curl -i -X PATCH -H "Content-Type: application/json" -d '[{"op": "add", "path": "/password", "value": "123456"}]' http://127.0.0.1:5000/users/541fb9d91d41c81a78f2dca4/
+    $ curl -i -X PATCH -H "Content-Type: application/json" -d '[{"op": "add", "path": "/password", "value": "666666"}]' http://127.0.0.1:5000/users/543934671d41c812802711f3/
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
     Server: Werkzeug/0.9.6 Python/2.7.3
-    Date: Mon, 22 Sep 2014 06:06:44 GMT
+    Date: Sat, 11 Oct 2014 13:59:26 GMT
 
     $ curl http://127.0.0.1:5000/users/
-    [{"password": "123456", "name": "tracey", "_id": "541fb9d91d41c81a78f2dca4"}]
+    [{"password": "666666", "date_joined": "2014-10-11T00:00:00Z", "name": "tracey", "_id": "543934671d41c812802711f3"}]
 
 ### DELETE
 
-    $ curl -i -X DELETE http://127.0.0.1:5000/users/541fb9d91d41c81a78f2dca4/
+    $ curl -i -X DELETE http://127.0.0.1:5000/users/543934671d41c812802711f3/
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
     Server: Werkzeug/0.9.6 Python/2.7.3
-    Date: Mon, 22 Sep 2014 06:08:58 GMT
+    Date: Sat, 11 Oct 2014 14:02:00 GMT
 
     $ curl http://127.0.0.1:5000/users/
     []
