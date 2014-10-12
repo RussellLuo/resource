@@ -9,8 +9,8 @@ from resource.shared_schema import (
 
 class MongoSerializer(Serializer):
 
-    serialize_schema = get_serialize_schema(['objectid', 'datetime'])
+    serialize_schema = get_serialize_schema(['regex', 'objectid', 'datetime'])
 
     deserialize_schema = get_deserialize_schema([
-        'int', 'bool', 'objectid', 'datetime'
+        'int', 'bool', 'regex', 'objectid', 'datetime'
     ])

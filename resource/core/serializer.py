@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import copy
 import re
+
+
+if sys.version_info[0] == 3:
+    str_type = str
+else:
+    str_type = basestring
+
+
+pattern = re.compile(r'(\w+)\((.*)\)')
 
 
 class Serializer(object):
@@ -32,10 +40,10 @@ class Serializer(object):
                 value[i] = cast_core(v)
             return value
 
-        backup = copy.deepcopy(data)
-        return cast_core(backup)
+        return cast_core(data)
 
     def serialize(self, data):
+        """Inplace serializing."""
 
         def cast_value(value):
             schema = self.serialize_schema
@@ -47,13 +55,7 @@ class Serializer(object):
         return self.cast(cast_value, data)
 
     def deserialize(self, data):
-
-        if sys.version_info[0] == 3:
-            str_type = str
-        else:
-            str_type = basestring
-
-        pattern = re.compile(r'(\w+)\((.*)\)')
+        """Inplace deserializing."""
 
         def cast_value(value):
             if isinstance(value, str_type):

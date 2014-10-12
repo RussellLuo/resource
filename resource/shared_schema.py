@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import re
 from datetime import datetime
 
 from bson import ObjectId
@@ -9,6 +10,7 @@ from resource import settings
 
 
 serialize_schema = {
+    'regex': (re._pattern_type, lambda value: '/%s/' % value.pattern),
     'objectid': (ObjectId, lambda value: str(value)),
     'datetime': (datetime, lambda value: value.strftime(settings.DATE_FORMAT))
 }
@@ -17,6 +19,7 @@ serialize_schema = {
 deserialize_schema = {
     'int': ('int', lambda value: int(value)),
     'bool': ('bool', lambda value: value == 'true'),
+    'regex': ('regex', lambda value: re.compile(value[1:-1])),
     'objectid': ('objectid', lambda value: ObjectId(value)),
     'datetime': ('datetime',
                  lambda value: datetime.strptime(value, settings.DATE_FORMAT))
