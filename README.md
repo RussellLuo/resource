@@ -73,8 +73,8 @@ Run REST Server
 
     resources = [
         Resource('users', Collection, form=UserForm,
-                serializer=MongoSerializer,
-                kwargs={'db': DB, 'table_name': 'user'})
+                 serializer=MongoSerializer,
+                 kwargs={'db': DB, 'table_name': 'user'})
     ]
 
 ### 3. run demo server

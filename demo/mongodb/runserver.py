@@ -7,13 +7,21 @@ from jsonform import JsonForm
 from pymongo import MongoClient
 from flask import Flask
 
-from resource import Resource, Filter
+from resource import Resource, Filter, BasicAuth
 from resource.index import Index
 from resource.db.mongo import Collection, MongoSerializer
 from resource.contrib.framework.flask import add_resource, make_index
 
 
 DB = MongoClient().test
+
+
+class UserAuth(BasicAuth):
+    def authenticated(self, auth_params):
+        return True
+
+    def authorized(self):
+        return True
 
 
 class UserForm(JsonForm):
@@ -53,7 +61,7 @@ class UserFilter(Filter):
 resources = [
     Resource('users', Collection, form_cls=UserForm,
              serializer_cls=MongoSerializer, filter_cls=UserFilter,
-             kwargs={'db': DB, 'table_name': 'user'})
+             auth_cls=UserAuth, kwargs={'db': DB, 'table_name': 'user'})
 ]
 
 

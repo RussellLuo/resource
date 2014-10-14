@@ -9,7 +9,7 @@ import sys
 from pymongo import MongoClient
 from flask import Flask
 
-from resource import Resource
+from resource import Resource, BasicAuth
 from resource.index import Index
 from resource.db.mongo import Collection, MongoSerializer
 from resource.contrib.framework.flask import add_resource, make_index
@@ -18,10 +18,22 @@ from resource.contrib.framework.flask import add_resource, make_index
 app = Flask(__name__)
 
 
+class TrivialAuth(BasicAuth):
+
+    def authenticated(self, auth_params):
+        username = auth_params.get('username')
+        password = auth_params.get('password')
+        if username and password:
+            return True
+
+    def authorized(self):
+        return True
+
+
 def get_resources(db):
     resources = [
         Resource(name, Collection,
-                 serializer_cls=MongoSerializer,
+                 serializer_cls=MongoSerializer, auth_cls=TrivialAuth,
                  kwargs={'db': db, 'table_name': name})
         for name in db.collection_names()
     ]
@@ -32,7 +44,7 @@ def register_resources(app, resources):
     for r in resources:
         add_resource(app, r)
 
-    index = Resource('index', Index, uri='/',
+    index = Resource('index', Index, uri='/', auth_cls=TrivialAuth,
                      kwargs={'resources': resources})
     make_index(app, index)
 

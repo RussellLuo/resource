@@ -7,13 +7,21 @@ from jsonform import JsonForm
 from sqlalchemy import create_engine
 from flask import Flask
 
-from resource import Resource, Filter
+from resource import Resource, Filter, BasicAuth
 from resource.index import Index
 from resource.db.sqla import Table, SqlaSerializer
 from resource.contrib.framework.flask import add_resource, make_index
 
 
 DB = create_engine('sqlite:///sqlite.db')
+
+
+class UserAuth(BasicAuth):
+    def authenticated(self, auth_params):
+        return True
+
+    def authorized(self):
+        return True
 
 
 class UserForm(JsonForm):
@@ -53,7 +61,7 @@ class UserFilter(Filter):
 resources = [
     Resource('users', Table, form_cls=UserForm,
              serializer_cls=SqlaSerializer, filter_cls=UserFilter,
-             kwargs={'db': DB, 'table_name': 'user'})
+             auth_cls=UserAuth, kwargs={'db': DB, 'table_name': 'user'})
 ]
 
 

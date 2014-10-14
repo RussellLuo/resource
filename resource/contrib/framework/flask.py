@@ -52,29 +52,42 @@ def response(method):
 def make_view(view):
     class View(MethodView):
 
+        def get_auth_params(self):
+            auth = request.authorization
+            if auth is None:
+                return None
+            return {
+                'username': auth.username,
+                'password': auth.password
+            }
+
         @response
         def get(self, pk=None):
             args = request.args.to_dict()
-            return view.get_proxy(pk=pk, query_params=args)
+            return view.get_proxy(pk=pk, query_params=args,
+                                  auth_params=self.get_auth_params())
 
         @response
         def post(self):
             data = payload()
-            return view.post_proxy(data=data)
+            return view.post_proxy(data=data,
+                                   auth_params=self.get_auth_params())
 
         @response
         def put(self, pk):
             data = payload()
-            return view.put_proxy(pk=pk, data=data)
+            return view.put_proxy(pk=pk, data=data,
+                                  auth_params=self.get_auth_params())
 
         @response
         def patch(self, pk):
             data = payload()
-            return view.patch_proxy(pk=pk, data=data)
+            return view.patch_proxy(pk=pk, data=data,
+                                    auth_params=self.get_auth_params())
 
         @response
         def delete(self, pk):
-            return view.delete_proxy(pk=pk)
+            return view.delete_proxy(pk=pk, auth_params=self.get_auth_params())
 
     return View
 

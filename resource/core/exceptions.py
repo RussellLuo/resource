@@ -20,8 +20,9 @@ class StatusCodeError(BaseError):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = ''
 
-    def __init__(self, detail=None):
+    def __init__(self, detail=None, headers=None):
         self.detail = detail or self.default_detail
+        self.headers = headers
 
     def __str__(self):
         return self.detail
@@ -35,3 +36,13 @@ class NotFoundError(StatusCodeError):
 class MethodNotAllowedError(StatusCodeError):
     status_code = status.HTTP_405_METHOD_NOT_ALLOWED
     default_detail = 'Method not allowed.'
+
+
+class UnauthorizedError(StatusCodeError):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    default_detail = 'Unauthorized.'
+
+
+class ForbiddenError(StatusCodeError):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = 'Forbidden.'

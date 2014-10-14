@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import functools
+
 from .conf import settings
 from .response import Response
 from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
@@ -8,6 +10,7 @@ from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
 
 def serialized(arg=None):
     def wrapper(method):
+        @functools.wraps(method)
         def decorator(self, **kwargs):
             # deserialize special arguments from request
             if arg in kwargs:
@@ -16,7 +19,7 @@ def serialized(arg=None):
             try:
                 response = method(self, **kwargs)
             except BaseError as e:
-                return Response(e.detail, e.status_code)
+                return Response(e.detail, e.status_code, e.headers)
 
             # serialize special arguments from response
             if isinstance(response.content, (list, tuple)):
@@ -32,11 +35,13 @@ def serialized(arg=None):
 
 class View(object):
 
-    def __init__(self, uri, form_cls, serializer_cls, filter_cls, **kwargs):
+    def __init__(self, uri, form_cls, serializer_cls,
+                 filter_cls, auth_cls, **kwargs):
         self.uri = uri
         self.form_cls = form_cls
         self.serializer = serializer_cls()
         self.filter = filter_cls(**kwargs)
+        self.auth = auth_cls()
         self.__dict__.update(kwargs)
 
     def get_pagination_args(self, query_params):
@@ -131,23 +136,29 @@ class View(object):
         return selected
 
     @serialized('query_params')
-    def get_proxy(self, pk=None, query_params=None):
+    def get_proxy(self, pk=None, query_params=None, auth_params=None):
+        method = 'GET_LIST' if pk is None else 'GET_ITEM'
+        self.auth.check_auth(method, auth_params)
         return self.get(pk, query_params)
 
     @serialized('data')
-    def post_proxy(self, data):
+    def post_proxy(self, data, auth_params=None):
+        self.auth.check_auth('POST', auth_params)
         return self.post(data)
 
     @serialized('data')
-    def put_proxy(self, pk, data):
+    def put_proxy(self, pk, data, auth_params=None):
+        self.auth.check_auth('PUT', auth_params)
         return self.put(pk, data)
 
     @serialized('data')
-    def patch_proxy(self, pk, data):
+    def patch_proxy(self, pk, data, auth_params=None):
+        self.auth.check_auth('PATCH', auth_params)
         return self.patch(pk, data)
 
     @serialized()
-    def delete_proxy(self, pk):
+    def delete_proxy(self, pk, auth_params=None):
+        self.auth.check_auth('DELETE', auth_params)
         return self.delete(pk)
 
     def get_pk(self, pk):

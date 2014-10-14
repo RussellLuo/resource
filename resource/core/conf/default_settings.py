@@ -14,3 +14,7 @@ DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 # ## Default item-size Per Page
 PER_PAGE = 20
+
+
+# ## Default Authorizer Class
+AUTH = 'resource.BasicAuth'
