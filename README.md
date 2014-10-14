@@ -28,6 +28,7 @@ Features
 + Pagination
 + Sorting
 + Fields Selection
++ Authentication
 + Support MongoDB
 + Support RDBMS (SQLite, MySQL, etc.)
 + Support Flask
@@ -36,7 +37,6 @@ Features
 Roadmap
 -------
 
-+ Authentication
 + HATEOAS
 + Documentation
 + Support Django
