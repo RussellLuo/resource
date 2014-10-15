@@ -3,11 +3,10 @@
 
 from datetime import datetime
 
-from jsonform import JsonForm
 from sqlalchemy import create_engine
 from flask import Flask
 
-from resource import Resource, Filter, BasicAuth
+from resource import Resource, Form, Filter, BasicAuth
 from resource.index import Index
 from resource.db.sqla import Table, SqlaSerializer
 from resource.contrib.framework.flask import add_resource, make_index
@@ -24,7 +23,7 @@ class UserAuth(BasicAuth):
         return True
 
 
-class UserForm(JsonForm):
+class UserForm(Form):
     def validate_datetime(value):
         if not isinstance(value, datetime):
             return 'value must be an instance of `datetime`'

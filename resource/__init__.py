@@ -4,6 +4,7 @@
 from .core.conf import settings
 from .core.resource import Resource
 from .core.view import View
+from .core.form import Form
 from .core.response import Response
 from .core import status
 from .core.serializer import Serializer
