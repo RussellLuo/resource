@@ -19,9 +19,6 @@ class UserAuth(BasicAuth):
     def authenticated(self, auth_params):
         return True
 
-    def authorized(self):
-        return True
-
 
 class UserForm(Form):
     def validate_datetime(value):

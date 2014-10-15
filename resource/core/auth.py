@@ -32,4 +32,4 @@ class BasicAuth(object):
 
     def authorized(self):
         """Validate if the authenticated user is allowed to pass through."""
-        return False
+        return True

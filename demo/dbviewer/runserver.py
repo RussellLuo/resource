@@ -19,15 +19,11 @@ app = Flask(__name__)
 
 
 class TrivialAuth(BasicAuth):
-
     def authenticated(self, auth_params):
         username = auth_params.get('username')
         password = auth_params.get('password')
         if username and password:
             return True
-
-    def authorized(self):
-        return True
 
 
 def get_resources(db):
