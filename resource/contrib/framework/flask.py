@@ -3,13 +3,13 @@
 
 from __future__ import absolute_import
 
-import json
-
 from flask import request, current_app as app
 from flask.views import MethodView
 
+from .view import ProxyView
 
-def payload():
+
+def payload(request):
     """ Performs sanity checks or decoding depending on the Content-Type,
     then returns the request payload as a dict. If request Content-Type is
     unsupported, aborts with a 400 (Bad Request).
@@ -40,19 +40,16 @@ def payload():
         return {}
 
 
-def response(method):
-    def decorator(*args, **kwargs):
-        res = method(*args, **kwargs)
-        content = json.dumps(res.content)
-        res.headers.update({'Content-Type': 'application/json'})
-        return app.make_response((content, res.status, res.headers))
-    return decorator
-
-
 def make_view(view):
-    class View(MethodView):
+    class View(ProxyView, MethodView):
 
-        def get_auth_params(self):
+        def __init__(self):
+            self.view = view
+
+        def get_query_params(self, request):
+            return request.args.to_dict()
+
+        def get_auth_params(self, request):
             auth = request.authorization
             if auth is None:
                 return None
@@ -61,33 +58,16 @@ def make_view(view):
                 'password': auth.password
             }
 
-        @response
-        def get(self, pk=None):
-            args = request.args.to_dict()
-            return view.get_proxy(pk=pk, query_params=args,
-                                  auth_params=self.get_auth_params())
+        def get_data(self, request):
+            return payload(request)
 
-        @response
-        def post(self):
-            data = payload()
-            return view.post_proxy(data=data,
-                                   auth_params=self.get_auth_params())
+        def make_response(self, content, status, headers):
+            return app.make_response((content, status, headers))
 
-        @response
-        def put(self, pk):
-            data = payload()
-            return view.put_proxy(pk=pk, data=data,
-                                  auth_params=self.get_auth_params())
-
-        @response
-        def patch(self, pk):
-            data = payload()
-            return view.patch_proxy(pk=pk, data=data,
-                                    auth_params=self.get_auth_params())
-
-        @response
-        def delete(self, pk):
-            return view.delete_proxy(pk=pk, auth_params=self.get_auth_params())
+        def dispatch_request(self, *args, **kwargs):
+            """Override to add additional `request` parameter to meth()."""
+            args = (request,) + args
+            return super(View, self).dispatch_request(*args, **kwargs)
 
     return View
 
@@ -95,8 +75,8 @@ def make_view(view):
 def get_args(resource):
     uri = resource.uri
     endpoint = str(resource.name)
-    view = make_view(resource.view)
-    view_func = view.as_view(endpoint)
+    view_cls = make_view(resource.view)
+    view_func = view_cls.as_view(endpoint)
     return uri, endpoint, view_func
 
 
