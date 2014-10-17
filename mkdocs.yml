@@ -1,1 +1,9 @@
 site_name: Resource
+repo_url: https://github.com/RussellLuo/resource
+
+pages:
+- ['index.md', 'Home']
+- ['features.md', 'Features']
+- ['demo.md', 'Demo & Test']
+
+theme: readthedocs
