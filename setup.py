@@ -9,9 +9,6 @@ install_requires = [
     'jsonpatch==1.7',
     'pymongo==2.7.2',
     'SQLAlchemy==0.9.7',
-    'requests==2.4.1',
-    'Flask==0.10.1',
-    'mkdocs==0.9',
 ]
 
 dependency_links = [

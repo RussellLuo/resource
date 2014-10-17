@@ -4,5 +4,3 @@ pymongo==2.7.2
 SQLAlchemy==0.9.7
 -e git+https://github.com/RussellLuo/py-mongosql.git#egg=py-mongosql
 requests==2.4.1
-Flask==0.10.1
-mkdocs==0.9
