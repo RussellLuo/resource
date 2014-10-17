@@ -6,7 +6,8 @@ from __future__ import absolute_import
 import json
 import base64
 
-from django.views.generic import View
+from django.views.generic import View as MethodView
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls import patterns, url
@@ -66,13 +67,20 @@ def payload(request):
 
 
 def make_view(view):
-    class View(ProxyView, View):
+    class View(ProxyView, MethodView):
 
-        def __init__(self):
+        def __init__(self, **kwargs):
+            # call `__init__` of the base class to set some
+            # additional attributes (e.g. `http_method_names`)
+            super(View, self).__init__(**kwargs)
             self.view = view
 
         def get_query_params(self, request):
-            return request.GET
+            params = {
+                k: v if len(v) > 1 else v[0]
+                for k, v in request.GET.items()
+            }
+            return params
 
         def get_auth_params(self, request):
             return get_authorization(request)
@@ -81,10 +89,26 @@ def make_view(view):
             return payload(request)
 
         def make_response(self, content, status, headers):
-            response = HttpResponse(content, status_code=status)
-            for key, value in headers:
+            response = HttpResponse(content, status=status)
+            for key, value in headers.items():
                 response[key] = value
             return response
+
+        @csrf_exempt
+        def dispatch(self, request, *args, **kwargs):
+            """Override to make dispatch() CSRF exempt."""
+            return super(View, self).dispatch(request, *args, **kwargs)
+
+        def post(self, request, *args, **kwargs):
+            """Override to consume the redundant parameter `pk`.
+
+            This problem is caused by the shortness of Django's url-patterns:
+
+                We can not specify two patterns with the same `regex`
+                while the value of `kwargs` are different.
+            """
+            kwargs.pop('pk', None)
+            return super(View, self).post(request, *args, **kwargs)
 
     return View
 
@@ -112,8 +136,8 @@ def url_rule(regex, view_cls, kwargs=None, methods=None):
 def get_resource_urlpatterns(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
-        url_rule(r'^%s$' % uri, view_cls, {pk: None}, methods=['GET']),
-        url_rule(r'^%s$' % uri, view_cls, methods=['POST']),
+        url_rule(r'^%s$' % uri, view_cls, {pk: None},
+                 methods=['GET', 'POST']),
         url_rule(r'^%s(?P<pk>\w+)/$' % uri, view_cls,
                  methods=['GET', 'PUT', 'PATCH', 'DELETE'])
     )

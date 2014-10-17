@@ -3,16 +3,16 @@
 
 from datetime import datetime
 
-from sqlalchemy import create_engine
+from pymongo import MongoClient
 from flask import Flask
 
 from resource import Resource, Form, Filter, BasicAuth
 from resource.index import Index
-from resource.db.sqla import Table, SqlaSerializer
+from resource.db.mongo import Collection, MongoSerializer
 from resource.contrib.framework.flask import add_resource, make_index
 
 
-DB = create_engine('sqlite:///sqlite.db')
+DB = MongoClient().test
 
 
 class UserAuth(BasicAuth):
@@ -55,8 +55,8 @@ class UserFilter(Filter):
 
 
 resources = [
-    Resource('users', Table, form_cls=UserForm,
-             serializer_cls=SqlaSerializer, filter_cls=UserFilter,
+    Resource('users', Collection, form_cls=UserForm,
+             serializer_cls=MongoSerializer, filter_cls=UserFilter,
              auth_cls=UserAuth, kwargs={'db': DB, 'table_name': 'user'})
 ]
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
 
-    index = Resource('index', Index, uri='/',
+    index = Resource('index', Index, uri='/', auth_cls=UserAuth,
                      kwargs={'resources': resources})
     make_index(app, index)
 
