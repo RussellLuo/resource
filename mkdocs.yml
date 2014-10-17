@@ -5,5 +5,3 @@ pages:
 - ['index.md', 'Home']
 - ['features.md', 'Features']
 - ['demo.md', 'Demo & Test']
-
-theme: readthedocs
