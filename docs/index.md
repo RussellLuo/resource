@@ -20,23 +20,23 @@ and you want to expose it to your users through a RESTful Web API. `Resource` is
 Features
 --------
 
-+ Full range of CRUD operations
-+ JSON all the time
-+ Easy and Extensible Data Validation
-+ Intelligent and Extensible Serializer
-+ Filtering
-+ Pagination
-+ Sorting
-+ Fields Selection
-+ Authentication
-+ Support MongoDB
-+ Support RDBMS (SQLite, MySQL, etc.)
-+ Support Flask
-+ Support Django
++ [Full range of CRUD operations](features.md#full-range-of-crud-operations)
++ [JSON all the time](features.md#json-all-the-time)
++ [Easy and Extensible Data Validation](features.md#easy-and-extensible-data-validation)
++ [Intelligent and Extensible Serializer](features.md#intelligent-and-extensible-serializer)
++ [Filtering](features.md#filtering)
++ [Pagination](features.md#pagination)
++ [Sorting](features.md#sorting)
++ [Fields Selection](features.md#fields-selection)
++ [Authentication](features.md#authentication)
++ [Support MongoDB](features.md#support-mongodb)
++ [Support RDBMS](features.md#support-rdbms)
++ [Support Flask](features.md#support-flask)
++ [Support Django](features.md#support-django)
 
 
 Demo & Test
 -----------
 
-+ Run Demo
-+ Run Test
++ [Run Demo](demo.md#run-demo)
++ [Run Test](demo.md#run-test)

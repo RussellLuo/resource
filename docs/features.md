@@ -91,6 +91,8 @@ All request/response data over the wire is in JSON-format.
 Easy and Extensible Data Validation
 -----------------------------------
 
+Please refer to [JsonForm][3] for exact validation schema.
+
     from resource import Form
 
     class UserForm(Form):
@@ -111,25 +113,39 @@ Easy and Extensible Data Validation
 Intelligent and Extensible Serializer
 -------------------------------------
 
-### Serialize Schema
-
-Value in Python   | Value in JSON
------------------ | --------------------------
-10                | 10
-True              | true
-re._pattern_type  | /russ/
-bson.ObjectId     | "543934671d41c812802711f3"
-datetime.datetime | "2014-10-11T00:00:00Z"
-
 ### Deserialize Schema
 
+Convert request data (in JSON/Query-Parameter) to Python type:
+
 Value in JSON/Query-Parameter        | Value in Python
------------------------------------- | -----------------
+------------------------------------ | -----------------------------------------
 "int(10)"                            | 10
 "bool(true)"                         | True
+"string"                             | "string"
 "regex(/russ/)"                      | re._pattern_type
-"objectid(543934671d41c812802711f3)" | bson.ObjectId
-"datetime(2014-10-11T00:00:00Z)"     | datetime.datetime
+"objectid(543934671d41c812802711f3)" | bson.ObjectId("543934671d41c812802711f3")
+"datetime(2014-10-11T00:00:00Z)"     | datetime.datetime(2014, 10, 11)
+
+If you set `DATE_FORMAT` to "%Y-%m-%d %H:%M:%S", then:
+
+    "datetime(2014-10-11 00:00:00)" => datetime.datetime(2014, 10, 11)
+
+### Serialize Schema
+
+Convert response data (in Python) to JSON:
+
+Value in Python                           | Value in JSON
+----------------------------------------- | --------------------------
+10                                        | 10
+True                                      | true
+"string"                                  | "string"
+re._pattern_type                          | "/russ/"
+bson.ObjectId("543934671d41c812802711f3") | "543934671d41c812802711f3"
+datetime.datetime(2014, 10, 11)           | "2014-10-11T00:00:00Z"
+
+If you set `DATE_FORMAT` to "%Y-%m-%d %H:%M:%S", then:
+
+    datetime.datetime(2014, 10, 11) => "2014-10-11 00:00:00"
 
 
 Filtering
@@ -232,6 +248,20 @@ See [Demo & Test](demo.md).
 Support RDBMS
 -------------
 
+`Resource` supports all RDBMS supported by `SQLAlchemy`. As of this writing, that includes:
+
++ MySQL (MariaDB)
++ PostgreSQL
++ SQLite
++ Oracle
++ Microsoft SQL Server
++ Firebird
++ Drizzle
++ Sybase
++ IBM DB2
++ SAP Sybase SQL Anywhere
++ MonetDB
+
 See [Demo & Test](demo.md).
 
 
@@ -249,5 +279,6 @@ See [Demo & Test](demo.md).
 
 [1]: http://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 [2]: http://tools.ietf.org/html/rfc6902
-[3]: http://docs.sqlalchemy.org/en/latest/orm/extensions/automap.html
-[4]: https://sqlsoup.readthedocs.org/en/latest/index.html
+[3]: https://github.com/RussellLuo/jsonform
+[4]: http://docs.sqlalchemy.org/en/latest/orm/extensions/automap.html
+[5]: https://sqlsoup.readthedocs.org/en/latest/index.html
