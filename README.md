@@ -30,7 +30,7 @@ Features
 + Fields Selection
 + Authentication
 + Support MongoDB
-+ Support RDBMS (SQLite, MySQL, etc.)
++ Support RDBMS
 + Support Flask
 + Support Django
 
@@ -41,4 +41,11 @@ Documentation
 Complete documentation is available at [http://resource.readthedocs.org][1].
 
 
+License
+-------
+
+[MIT][2]
+
+
 [1]: http://resource.readthedocs.org
+[2]: http://opensource.org/licenses/MIT
