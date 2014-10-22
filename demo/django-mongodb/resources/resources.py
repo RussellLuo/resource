@@ -7,7 +7,7 @@ from pymongo import MongoClient
 
 from resource import Resource, Form, Filter, BasicAuth
 from resource.root import Root
-from resource.db.mongo import Collection, MongoSerializer
+from resource.contrib.db.mongo import Collection, MongoSerializer
 
 
 DB = MongoClient().test

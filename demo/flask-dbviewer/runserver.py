@@ -11,7 +11,7 @@ from flask import Flask
 
 from resource import Resource, BasicAuth
 from resource.root import Root
-from resource.db.mongo import Collection, MongoSerializer
+from resource.contrib.db.mongo import Collection, MongoSerializer
 from resource.contrib.framework.flask import add_resource, make_root
 
 
