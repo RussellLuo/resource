@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import re
 
-
-if sys.version_info[0] == 3:
-    str_type = str
-else:
-    str_type = basestring
+from ._compat import str_type
 
 
 pattern = re.compile(r'(\w+)\((.*)\)')

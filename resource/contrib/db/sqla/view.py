@@ -7,8 +7,9 @@ from jsonpatch import JsonPatch
 from mongosql import MongoQuery
 
 from resource import View, Response, status
-from resource.core.exceptions import BaseError, NotFoundError
-from resource.utils import get_exception_detail
+from resource.core.exceptions import (
+    get_exception_detail, BaseError, NotFoundError
+)
 
 
 base = automap_base()
