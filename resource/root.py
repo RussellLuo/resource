@@ -6,11 +6,11 @@ from operator import itemgetter
 from resource import settings, View, Response
 
 
-class Index(View):
-    """Index of resources."""
+class Root(View):
+    """Root of resources."""
 
     def __init__(self, *arg, **kwargs):
-        super(Index, self).__init__(*arg, **kwargs)
+        super(Root, self).__init__(*arg, **kwargs)
         self.links = [
             {'href': settings.DOMAIN_NAME + r.uri, 'title': r.name}
             for r in self.resources

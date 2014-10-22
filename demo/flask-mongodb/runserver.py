@@ -7,9 +7,9 @@ from pymongo import MongoClient
 from flask import Flask
 
 from resource import Resource, Form, Filter, BasicAuth
-from resource.index import Index
+from resource.root import Root
 from resource.db.mongo import Collection, MongoSerializer
-from resource.contrib.framework.flask import add_resource, make_index
+from resource.contrib.framework.flask import add_resource, make_root
 
 
 DB = MongoClient().test
@@ -68,8 +68,8 @@ if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
 
-    index = Resource('index', Index, uri='/', auth_cls=UserAuth,
-                     kwargs={'resources': resources})
-    make_index(app, index)
+    root = Resource('root', Root, uri='/', auth_cls=UserAuth,
+                    kwargs={'resources': resources})
+    make_root(app, root)
 
     app.run(debug=True)

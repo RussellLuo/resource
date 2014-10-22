@@ -6,7 +6,7 @@ from datetime import datetime
 from pymongo import MongoClient
 
 from resource import Resource, Form, Filter, BasicAuth
-from resource.index import Index
+from resource.root import Root
 from resource.db.mongo import Collection, MongoSerializer
 
 
@@ -59,5 +59,5 @@ resources = [
 ]
 
 
-index = Resource('index', Index, uri='/', auth_cls=UserAuth,
-                 kwargs={'resources': resources})
+root = Resource('root', Root, uri='/', auth_cls=UserAuth,
+                kwargs={'resources': resources})

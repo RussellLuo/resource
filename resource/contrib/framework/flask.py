@@ -90,7 +90,7 @@ def add_resource(app, resource, pk='pk'):
                      methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 
 
-def make_index(app, resource, pk='pk'):
+def make_root(app, resource, pk='pk'):
     uri, endpoint, view_func = get_args(resource)
 
     app.add_url_rule(uri, defaults={pk: None},

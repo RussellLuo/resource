@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .resources import index, resources
+from .resources import root, resources
 
-from resource.contrib.framework.django import (
-    get_resource_urlpatterns, get_index_urlpatterns
-)
+from resource.contrib.framework.django import add_resource, make_root
 
 
-urlpatterns = get_index_urlpatterns(index)
+urlpatterns = make_root(root)
 
 for r in resources:
-    urlpatterns += get_resource_urlpatterns(r)
+    urlpatterns += add_resource(r)

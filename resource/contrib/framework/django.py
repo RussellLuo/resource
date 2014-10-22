@@ -133,7 +133,7 @@ def url_rule(regex, view_cls, kwargs=None, methods=None):
     return url(regex, view, kwargs)
 
 
-def get_resource_urlpatterns(resource, pk='pk'):
+def add_resource(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
         url_rule(r'^%s$' % uri, view_cls, {pk: None},
@@ -144,7 +144,7 @@ def get_resource_urlpatterns(resource, pk='pk'):
     return urlpatterns
 
 
-def get_index_urlpatterns(resource, pk='pk'):
+def make_root(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
         url_rule(r'^%s$' % uri, view_cls, {pk: None}, methods=['GET']),
