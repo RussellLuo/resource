@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from resource import Serializer
-from resource.shared_schema import (
+from ..shared_schema import (
     get_serialize_schema, get_deserialize_schema
 )
 
