@@ -7,7 +7,7 @@ from jsonpatch import JsonPatch
 from mongosql import MongoQuery
 
 from resource import View, Response, status
-from resource.core.exceptions import (
+from resource.exceptions import (
     get_exception_detail, BaseError, NotFoundError
 )
 

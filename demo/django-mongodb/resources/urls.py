@@ -3,7 +3,7 @@
 
 from .resources import root, resources
 
-from resource.contrib.framework.django import add_resource, make_root
+from resource.framework.django import add_resource, make_root
 
 
 urlpatterns = make_root(root)

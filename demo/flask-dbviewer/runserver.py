@@ -10,9 +10,9 @@ from pymongo import MongoClient
 from flask import Flask
 
 from resource import Resource, BasicAuth
-from resource.root import Root
+from resource.contrib.root import Root
 from resource.contrib.db.mongo import Collection, MongoSerializer
-from resource.contrib.framework.flask import add_resource, make_root
+from resource.framework.flask import add_resource, make_root
 
 
 app = Flask(__name__)
