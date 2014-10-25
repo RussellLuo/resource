@@ -49,6 +49,13 @@ Additional requirements for Flask demos
     (env)$ python demo/flask-sqlite/create_tables.py
     (env)$ python demo/flask-sqlite/runserver.py
 
+#### token-login
+
+    (env)$ cd demo/token-login
+    (env)$ export PYTHONPATH=.:../..
+    (env)$ # start mongodb server (e.g. sudo mongod)
+    (env)$ python runserver.py
+
 
 Run Test
 --------
@@ -66,3 +73,10 @@ Run Test
 
     (env)$ # Run Test
     (env)$ python tests/test_sqla.py
+
+### Test Token
+
+    (env)$ # Run token-login demo
+
+    (env)$ # Run Test
+    (env)$ python tests/test_token.py

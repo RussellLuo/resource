@@ -229,14 +229,92 @@ For example, the following request will receive all users with only `name` and `
 Authentication
 --------------
 
+### Basic Authentication
+
+#### 1. No authentication
+
     from resource import BasicAuth
 
-    class TrivialAuth(BasicAuth):
-        def authenticated(self, auth_params):
+    class NoAuth(BasicAuth):
+        def authenticated(self, method, auth_params):
+            return True
+
+With `NoAuth`, you can access resources without authentication:
+
+    $ curl http://127.0.0.1:5000/users/
+
+#### 2. Simple authentication
+
+    from resource import BasicAuth
+
+    class SimpleAuth(BasicAuth):
+        def authenticated(self, method, auth_params):
             username = auth_params.get('username')
             password = auth_params.get('password')
-            if username and password:
+            return (username == 'russell' and password == '123456')
+
+With `SimpleAuth`, you must set `Authorization` header to access resources:
+
+    $ curl -u russell:encrypted http://127.0.0.1:5000/users/
+
+#### 3. Complex authentication
+
+    from resource import BasicAuth
+
+    class ComplexAuth(BasicAuth):
+        def authenticated(self, method, auth_params):
+            # allow GET in any case
+            if method == 'GET':
                 return True
+            username = auth_params.get('username')
+            password = auth_params.get('password')
+            user = db.user.find_one({'username': username, 'password': password})
+            return bool(user)
+
+with `ComplexAuth`, you must give credentials of a registered user to access resources:
+
+    $ curl -u russell:encrypted http://127.0.0.1:5000/users/
+
+### Token-based Authentication
+
+`Resource` also support Token-based authentication, you can do it based on `TokenAuth`:
+
+    from resource.contrib.token import TokenAuth
+
+    class TokenBasedAuth(TokenAuth):
+        def has_user(self, user_pk):
+            user = db.user.find_one({'_id': ObjectId(user_pk)})
+            return bool(user)
+
+`TokenBasedAuth` is used to validate an existing token. To generate a new token, you must also provide a resource (e.g. named `tokens`), which can be made by subclassing `TokenView`:
+
+    from resource.contrib.token import TokenView
+
+    class Token(TokenView):
+        def get_user_pk(self, username, password):
+            user = db.user.find_one({'username': username, 'password': password})
+            if not user:
+                return None
+            return str(user['_id'])
+
+    token = Resource('tokens', Token, auth_cls=NoAuth)
+
+Then, you can get a token and use it by following the steps below:
+
+1. POST (with username and password) to generate a token
+
+        $ curl -X POST -H "Content-Type: application/json" -d '{"username":"russell","password":"123456"}' http://127.0.0.1:5000/tokens/
+
+2. get the token from the response (in JSON format) of POST
+
+        $ {"token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8", "expires": 3600}
+
+        $ # If `username` or `password` is invalid
+        $ {"token": null, "expires": 0}
+
+3. set the token as username part in the Authorization header to access resources
+
+        $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/users/
 
 
 Support MongoDB
