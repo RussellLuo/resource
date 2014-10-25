@@ -239,7 +239,7 @@ Authentication
         def authenticated(self, method, auth_params):
             return True
 
-For resources protected by `NoAuth`, you can access them without authentication:
+For resources protected by `NoAuth`, you can access them without credentials:
 
     $ curl http://127.0.0.1:5000/users/
 
@@ -253,7 +253,7 @@ For resources protected by `NoAuth`, you can access them without authentication:
             password = auth_params.get('password')
             return (username == 'russell' and password == '123456')
 
-For resources protected by `SimpleAuth`, you must set `Authorization` header to access resources:
+For resources protected by `SimpleAuth`, you must set `Authorization` header to access them:
 
     $ curl -u russell:encrypted http://127.0.0.1:5000/users/
 
@@ -272,7 +272,7 @@ For resources protected by `SimpleAuth`, you must set `Authorization` header to 
             user = db.user.find_one({'username': username, 'password': password})
             return bool(user)
 
-For resources protected by `ComplexAuth`, you can access them via `GET` without authentication:
+For resources protected by `ComplexAuth`, you can access them via `GET` without credentials:
 
     $ curl -u russell:encrypted http://127.0.0.1:5000/resource/
 
@@ -284,6 +284,7 @@ But you must give credentials of a registered user to access these resources via
 
 `Resource` also support Token-based authentication, you can do it based on `TokenAuth`:
 
+    from bson import ObjectId
     from resource.contrib.token import TokenAuth
 
     class TokenBasedAuth(TokenAuth):

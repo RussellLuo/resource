@@ -38,7 +38,7 @@ Features
 Documentation
 -------------
 
-Complete documentation is available at [http://resource.readthedocs.org][1].
+Complete documentation is available [here][1].
 
 
 License
@@ -47,5 +47,5 @@ License
 [MIT][2]
 
 
-[1]: http://resource.readthedocs.org
+[1]: https://github.com/RussellLuo/resource/blob/master/docs/index.md
 [2]: http://opensource.org/licenses/MIT
