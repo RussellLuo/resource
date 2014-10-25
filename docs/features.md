@@ -241,7 +241,7 @@ Authentication
 
 For resources protected by `NoAuth`, you can access them without credentials:
 
-    $ curl http://127.0.0.1:5000/users/
+    $ curl http://127.0.0.1:5000/<resource>/
 
 #### 2. Simple authentication
 
@@ -255,7 +255,7 @@ For resources protected by `NoAuth`, you can access them without credentials:
 
 For resources protected by `SimpleAuth`, you must set `Authorization` header to access them:
 
-    $ curl -u russell:encrypted http://127.0.0.1:5000/users/
+    $ curl -u russell:encrypted http://127.0.0.1:5000/<resource>/
 
 #### 3. Complex authentication
 
@@ -274,11 +274,11 @@ For resources protected by `SimpleAuth`, you must set `Authorization` header to 
 
 For resources protected by `ComplexAuth`, you can access them via `GET` without credentials:
 
-    $ curl -u russell:encrypted http://127.0.0.1:5000/resource/
+    $ curl http://127.0.0.1:5000/<resource>/
 
 But you must give credentials of a registered user to access these resources via other HTTP methods (i.e. `POST`, `PUT`, `PATCH`, `DELETE`):
 
-    $ curl -u russell:encrypted -X DELETE http://127.0.0.1:5000/resource/<pk>
+    $ curl -u russell:encrypted -X DELETE http://127.0.0.1:5000/<resource>/<pk>
 
 ### Token-based Authentication
 
@@ -320,7 +320,7 @@ Then, you can get a token and use it by following the steps below:
 
 3. set the token as username part in the Authorization header to access resources
 
-        $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/users/
+        $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/<resource>/
 
 
 Support MongoDB
