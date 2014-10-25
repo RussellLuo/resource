@@ -20,7 +20,8 @@ class UserAuth(TokenBasedAuth):
     In general, `TokenBasedAuth` is enough.
     """
     def authenticated(self, method, auth_params):
-        if method == 'POST':  # everyone can POST to register an account
+        # everyone can POST to register an account
+        if method == 'POST':
             return True
         return super(UserAuth, self).authenticated(method, auth_params)
 
