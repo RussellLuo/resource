@@ -7,7 +7,9 @@ from .exceptions import (
 
 
 class BasicAuth(object):
+    """Basic Authentication."""
 
+    # inherent limit of the resource
     allowed_methods = (
         'GET_LIST', 'GET_ITEM',
         'POST', 'PUT', 'PATCH', 'DELETE'
@@ -17,7 +19,8 @@ class BasicAuth(object):
         if method not in self.allowed_methods:
             raise MethodNotAllowedError()
 
-        if not self.authenticated(auth_params or {}):
+        auth_params = auth_params or {}
+        if not self.authenticated(method, auth_params):
             headers = {
                 'WWW-Authenticate': 'Basic realm:"resource"'
             }
@@ -26,10 +29,13 @@ class BasicAuth(object):
         if not self.authorized():
             raise ForbiddenError()
 
-    def authenticated(self, auth_params):
-        """Authenticate credentials given by `auth_params`."""
+    def authenticated(self, method, auth_params):
+        """Authenticate the user with credentials in `auth_params`.
+
+        Sometimes, `method` also affect the authentication here.
+        """
         return False
 
     def authorized(self):
-        """Validate if the authenticated user is allowed to pass through."""
+        """Validate if the authenticated user has required permissions."""
         return True

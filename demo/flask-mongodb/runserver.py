@@ -16,7 +16,7 @@ DB = MongoClient().test
 
 
 class UserAuth(BasicAuth):
-    def authenticated(self, auth_params):
+    def authenticated(self, method, auth_params):
         return True
 
 

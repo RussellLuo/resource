@@ -3,4 +3,5 @@ jsonpatch==1.7
 pymongo==2.7.2
 SQLAlchemy==0.9.7
 -e git+https://github.com/RussellLuo/py-mongosql.git#egg=py-mongosql
+itsdangerous==0.24
 requests==2.4.1
