@@ -42,6 +42,11 @@ class TestBase(unittest.TestCase):
                              headers=self.headers)
         return resp.json()
 
+    def logout(self, token):
+        resp = requests.delete('%s%s/' % (self.TOKEN_URI, token),
+                               auth=(token, ''))
+        return resp
+
 
 class TokenTest(TestBase):
 
@@ -62,13 +67,27 @@ class UserTest(TestBase):
         resp = requests.get(self.USER_URI)
         self.assertEqual(resp.status_code, 401)
 
+    def test_get_with_invalid_token(self):
+        resp = requests.get(self.USER_URI, auth=('anonymous', ''))
+        self.assertEqual(resp.status_code, 401)
+
     def test_get_with_valid_token(self):
         token = self.login('russell', '123456')
         resp = requests.get(self.USER_URI, auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 200)
 
-    def test_get_with_invalid_token(self):
-        resp = requests.get(self.USER_URI, auth=('anonymous', ''))
+    def test_get_after_logout(self):
+        # after login, before logout, `token` is valid
+        token = self.login('russell', '123456')
+        resp = requests.get(self.USER_URI, auth=(token['token'], ''))
+        self.assertEqual(resp.status_code, 200)
+
+        # logout
+        resp = self.logout(token['token'])
+        self.assertEqual(resp.status_code, 204)
+
+        # after logout, `token` becomes invalid
+        resp = requests.get(self.USER_URI, auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 401)
 
     def test_post(self):

@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from resource import settings, View, Response, status
+from resource.exceptions import NotFoundError
 from resource.utils import import_object
 
-from .signer import make_token
+from .signer import make_token, load_data
 
 
 class TokenView(View):
@@ -23,8 +24,12 @@ class TokenView(View):
     token_user = import_object(settings.TOKEN_USER)
 
     def post(self, data):
+        """Make a token based on `uesrname`, `password` and `expires`.
+        """
         username = data.get('username')
         password = data.get('password')
+
+        # `expires` is optional
         expires = data.get('expires')
         if expires is None:
             expires = settings.TOKEN_EXPIRES
@@ -38,3 +43,13 @@ class TokenView(View):
 
         return Response({'token': token, 'expires': expires},
                         status=status.HTTP_201_CREATED)
+
+    def delete(self, pk):
+        """Invalidate the token given as `pk`."""
+        data = load_data(settings.SECRET_KEY, pk)
+        if data is None:
+            raise NotFoundError()
+
+        self.token_user.invalidate_key(data['key'])
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

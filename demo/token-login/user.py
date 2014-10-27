@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import uuid
+
 from bson import ObjectId
 
 from resource import settings
@@ -22,9 +24,19 @@ class MongoTokenUser(TokenUser):
 
     @classmethod
     def exists(self, key):
-        pk = key.get('pk')
-        secret = key.get('secret')
+        pk, secret = key.get('pk'), key.get('secret')
         if pk is None or secret is None:
             return False
         user = db.user.find_one({'_id': ObjectId(pk), 'jwt_secret': secret})
         return bool(user)
+
+    @classmethod
+    def invalidate_key(cls, key):
+        pk, secret = key.get('pk'), key.get('secret')
+        if pk is None:
+            return
+        new_secret = str(uuid.uuid4())
+        db.user.update(
+            {'_id': ObjectId(pk)},
+            {'$set': {'jwt_secret': new_secret}}
+        )
