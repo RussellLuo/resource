@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from resource import settings, View, Response, status
+from resource.utils import import_object
 
 from .signer import make_token
 
@@ -19,6 +20,8 @@ class TokenView(View):
         and get the token from cookies to set Authorization header every time
     """
 
+    token_user = import_object(settings.TOKEN_USER)
+
     def post(self, data):
         username = data.get('username')
         password = data.get('password')
@@ -26,19 +29,12 @@ class TokenView(View):
         if expires is None:
             expires = settings.TOKEN_EXPIRES
 
-        user_pk = self.get_user_pk(username, password)
-        if user_pk is None:
+        key = self.token_user.get_key(username, password)
+        if key is None:
             token = None
             expires = 0
         else:
-            token = make_token(settings.SECRET_KEY, {'pk': user_pk}, expires)
+            token = make_token(settings.SECRET_KEY, {'key': key}, expires)
 
         return Response({'token': token, 'expires': expires},
                         status=status.HTTP_201_CREATED)
-
-    def get_user_pk(self, username, password):
-        """Get the `pk` of user which matches `username` and `password`.
-
-        Should be overridden with custom logic.
-        """
-        return None

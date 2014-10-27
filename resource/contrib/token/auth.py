@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from resource import settings, BasicAuth
+from resource.utils import import_object
 
 from .signer import load_data
 
@@ -11,6 +12,9 @@ class TokenAuth(BasicAuth):
 
     The Authorization header will contain the auth token as the username.
     """
+
+    token_user = import_object(settings.TOKEN_USER)
+
     def authenticated(self, method, auth_params):
         token = auth_params.get('username')
         if token is None:
@@ -20,11 +24,4 @@ class TokenAuth(BasicAuth):
         if data is None:
             return False
 
-        return self.has_user(data['pk'])
-
-    def has_user(self, user_pk):
-        """Check if `user_pk` matches an existing user.
-
-        Should be overridden with custom logic.
-        """
-        return False
+        return self.token_user.exists(data['key'])

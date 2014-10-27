@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import uuid
 import unittest
 from datetime import datetime
 
@@ -23,7 +24,8 @@ class TestBase(unittest.TestCase):
         self.db.user.insert({
             'username': 'russell',
             'password': '123456',
-            'date_joined': datetime(2014, 10, 25)
+            'date_joined': datetime(2014, 10, 25),
+            'jwt_secret': str(uuid.uuid4())
         })
 
         self.headers = {'content-type': 'application/json'}

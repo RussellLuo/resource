@@ -6,16 +6,23 @@ os.environ['RESOURCE_SETTINGS_MODULE'] = 'settings'
 
 from flask import Flask
 
-from resource import settings, Resource
+from resource import settings, Resource, BasicAuth
 from resource.contrib.root import Root
 from resource.contrib.db.mongo import Collection, MongoSerializer
+from resource.contrib.token import TokenAuth, TokenView
 from resource.framework.flask import add_resource, make_root
 
-from token_ import NoAuth, TokenBasedAuth, token
+
+db = settings.DB
 
 
-class UserAuth(TokenBasedAuth):
-    """Subclass `TokenBasedAuth` to allow POST specially.
+class NoAuth(BasicAuth):
+    def authenticated(self, method, auth_params):
+        return True
+
+
+class UserAuth(TokenAuth):
+    """Subclass `TokenAuth` to allow POST specially.
 
     In general, `TokenBasedAuth` is enough.
     """
@@ -27,7 +34,7 @@ class UserAuth(TokenBasedAuth):
 
 
 resources = [
-    token,
+    Resource('tokens', TokenView, auth_cls=NoAuth),
     Resource('users', Collection, auth_cls=UserAuth,
              serializer_cls=MongoSerializer,
              kwargs={'db': settings.DB, 'table_name': 'user'})

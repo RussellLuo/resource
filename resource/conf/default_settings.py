@@ -23,3 +23,4 @@ AUTH = 'resource.BasicAuth'
 # ## Default settings for token
 SECRET_KEY = 'your-own-secret-key'
 TOKEN_EXPIRES = 3600
+TOKEN_USER = 'resource.contrib.token.TokenUser'

@@ -4,5 +4,6 @@
 from pymongo import MongoClient
 
 DOMAIN_NAME = 'http://localhost:5000'
+TOKEN_USER = 'user.MongoTokenUser'
 
 DB = MongoClient().test
