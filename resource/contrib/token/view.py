@@ -36,11 +36,11 @@ class TokenView(View):
 
         pk, secret = self.token_user.get_key(username, password)
         if pk is None or secret is None:
-            token = None
-            expires = 0
-        else:
-            token_data = {'pk': pk, 'secret': secret}
-            token = make_token(settings.SECRET_KEY, token_data, expires)
+            errors = {'errors': 'username or password is wrong'}
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        token_data = {'pk': pk, 'secret': secret}
+        token = make_token(settings.SECRET_KEY, token_data, expires)
 
         return Response({'id': pk, 'token': token, 'expires': expires},
                         status=status.HTTP_201_CREATED)
