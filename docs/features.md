@@ -282,28 +282,50 @@ But you must give credentials of a registered user to access these resources via
 
 ### Token-based Authentication
 
-`Resource` also support Token-based authentication, you can do it based on `TokenAuth`:
+`Resource` also support Token-based authentication.
+
+#### 1. At server side
+
+First, you must subclass `TokenUser`:
 
     from bson import ObjectId
-    from resource.contrib.token import TokenAuth
+    from resource.contrib.token import TokenUser
 
-    class TokenBasedAuth(TokenAuth):
-        def has_user(self, user_pk):
-            user = db.user.find_one({'_id': ObjectId(user_pk)})
-            return bool(user)
-
-`TokenBasedAuth` is used to validate an existing token. To generate a new token, you must also provide a resource (e.g. named `tokens`), which can be made by subclassing `TokenView`:
-
-    from resource.contrib.token import TokenView
-
-    class Token(TokenView):
-        def get_user_pk(self, username, password):
+    class MongoTokenUser(TokenUser):
+        @classmethod
+        def get_key(self, username, password):
             user = db.user.find_one({'username': username, 'password': password})
             if not user:
-                return None
-            return str(user['_id'])
+                return None, None
 
-    token = Resource('tokens', Token, auth_cls=NoAuth)
+            return str(user['_id']), user['jwt_secret']
+
+        @classmethod
+        def exists(self, pk, secret):
+            if pk is None or secret is None:
+                return False
+            user = db.user.find_one({'_id': ObjectId(pk), 'jwt_secret': secret})
+            return bool(user)
+
+        @classmethod
+        def invalidate_key(cls, pk):
+            try:
+                pk = ObjectId(pk)
+            except:
+                return False
+
+            new_secret = str(uuid.uuid4())
+            res = db.user.update(
+                {'_id': pk},
+                {'$set': {'jwt_secret': new_secret}}
+            )
+            return res['updatedExisting']
+
+Next, set class `MongoTokenUser` (with its module-path) as the value of `TOKEN_USER` in settings:
+
+    TOKEN_USER = '<module_path>.MongoTokenUser'
+
+#### 2. At client side
 
 Then, you can get a token and use it by following the steps below:
 
@@ -313,10 +335,7 @@ Then, you can get a token and use it by following the steps below:
 
 2. get the token from the response (in JSON format) of POST
 
-        $ {"token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8", "expires": 3600}
-
-        $ # If `username` or `password` is invalid
-        $ {"token": null, "expires": 0}
+        $ {"id": "543934671d41c812802711f3", "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8", "expires": 3600}
 
 3. set the token as username part in the Authorization header to access resources
 
