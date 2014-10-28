@@ -21,21 +21,24 @@ class NoAuth(BasicAuth):
         return True
 
 
-class UserAuth(TokenAuth):
+class AllowPOSTAuth(TokenAuth):
     """Subclass `TokenAuth` to allow POST specially.
 
-    In general, `TokenBasedAuth` is enough.
+    In general, `TokenAuth` is enough.
     """
     def authenticated(self, method, auth_params):
-        # everyone can POST to register an account
+        # allow POST in any case
+        # e.g.
+        #     1. everyone can "POST /users/" to register an account
+        #     2. everyone can "POST /tokens/" to login
         if method == 'POST':
             return True
-        return super(UserAuth, self).authenticated(method, auth_params)
+        return super(AllowPOSTAuth, self).authenticated(method, auth_params)
 
 
 resources = [
-    Resource('tokens', TokenView, auth_cls=NoAuth),
-    Resource('users', Collection, auth_cls=UserAuth,
+    Resource('tokens', TokenView, auth_cls=AllowPOSTAuth),
+    Resource('users', Collection, auth_cls=AllowPOSTAuth,
              serializer_cls=MongoSerializer,
              kwargs={'db': settings.DB, 'table_name': 'user'})
 ]

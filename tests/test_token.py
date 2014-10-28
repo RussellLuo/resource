@@ -50,15 +50,40 @@ class TestBase(unittest.TestCase):
 
 class TokenTest(TestBase):
 
-    def test_get_valid_token(self):
+    def test_login_with_valid_credentials(self):
         token = self.login('russell', '123456')
         self.assertNotEqual(token['token'], None)
         self.assertEqual(token['expires'], 3600)
 
-    def test_get_invalid_token(self):
+    def test_login_with_invalid_credentials(self):
         token = self.login('russell', 'error_password')
         self.assertEqual(token['token'], None)
         self.assertEqual(token['expires'], 0)
+
+    def test_logout_without_token(self):
+        token = self.login('russell', '123456')
+
+        # logout without auth-token
+        resp = self.logout(token['id'], '')
+        self.assertEqual(resp.status_code, 401)
+
+    def test_logout_with_wrong_tokenid(self):
+        token = self.login('russell', '123456')
+
+        # logout with wrong token-id
+        resp = self.logout('1', token['token'])
+        self.assertEqual(resp.status_code, 404)
+
+    def test_logout_twice(self):
+        token = self.login('russell', '123456')
+
+        # the 1st logout
+        resp = self.logout(token['id'], token['token'])
+        self.assertEqual(resp.status_code, 204)
+
+        # the 2nd logout, token is invalid
+        resp = self.logout(token['id'], token['token'])
+        self.assertEqual(resp.status_code, 401)
 
 
 class UserTest(TestBase):
@@ -76,7 +101,7 @@ class UserTest(TestBase):
         resp = requests.get(self.USER_URI, auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 200)
 
-    def test_get_after_logout(self):
+    def test_get_login_logout(self):
         # after login, before logout, `token` is valid
         token = self.login('russell', '123456')
         resp = requests.get(self.USER_URI, auth=(token['token'], ''))

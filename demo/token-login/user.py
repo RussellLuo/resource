@@ -31,9 +31,14 @@ class MongoTokenUser(TokenUser):
 
     @classmethod
     def invalidate_key(cls, pk):
+        try:
+            pk = ObjectId(pk)
+        except:
+            return False
+
         new_secret = str(uuid.uuid4())
         res = db.user.update(
-            {'_id': ObjectId(pk)},
+            {'_id': pk},
             {'$set': {'jwt_secret': new_secret}}
         )
         return res['updatedExisting']
