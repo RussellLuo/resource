@@ -24,4 +24,4 @@ class TokenAuth(BasicAuth):
         if data is None:
             return False
 
-        return self.token_user.exists(data['key'])
+        return self.token_user.exists(**data)

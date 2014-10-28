@@ -5,41 +5,45 @@
 class TokenUser(object):
     """Handle the `token-key` of the user.
 
-    `token-key` is token related data stored in user model.
+    `token-key` is token (JWT) related data stored in user model.
 
-    Below is a recommended implementation:
+    Below is the structure of `token-key`:
 
         token-key               | user model
         ----------------------- | ----------
         pk (primary key)        | id
         secret (JWT secret key) | jwt_secret
 
-    Of course, you can build `token-key` with your preferred data.
+    `jwt_secret` is a recommended column name. Of course, you can use your
+    preferred name.
     """
     @classmethod
     def get_key(cls, username, password):
         """Get token-key of the user that matches `username` and `password`.
 
+        Must return a tuple (pk, secret).
+
         Should be overridden with custom logic.
         """
-        return None
+        return None, None
 
     @classmethod
-    def exists(cls, key):
-        """Check if `key` matches an existing user.
+    def exists(cls, pk, secret):
+        """Check if `pk` and `secret` match an existing user.
 
         Should be overridden with custom logic.
         """
         return False
 
     @classmethod
-    def invalidate_key(cls, key):
-        """Invalidate the given `key`.
+    def invalidate_key(cls, pk):
+        """Invalidate the key related to `pk`.
 
         In recommended implementation, this means:
-            Find an user that matches pk-part of `key`, and change his
-            secret-part of `key`.
+            + Find an user that matches `pk` as his `id`, and change his
+            `jwt_secret`, and return True.
+            + If `pk` matches no user, return False
 
-        Must be overridden with custom logic.
+        Should be overridden with custom logic.
         """
-        raise NotImplementedError()
+        return False

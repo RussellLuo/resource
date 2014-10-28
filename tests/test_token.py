@@ -42,8 +42,8 @@ class TestBase(unittest.TestCase):
                              headers=self.headers)
         return resp.json()
 
-    def logout(self, token):
-        resp = requests.delete('%s%s/' % (self.TOKEN_URI, token),
+    def logout(self, id, token):
+        resp = requests.delete('%s%s/' % (self.TOKEN_URI, id),
                                auth=(token, ''))
         return resp
 
@@ -83,7 +83,7 @@ class UserTest(TestBase):
         self.assertEqual(resp.status_code, 200)
 
         # logout
-        resp = self.logout(token['token'])
+        resp = self.logout(token['id'], token['token'])
         self.assertEqual(resp.status_code, 204)
 
         # after logout, `token` becomes invalid

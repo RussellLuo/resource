@@ -5,7 +5,7 @@ from resource import settings, View, Response, status
 from resource.exceptions import NotFoundError
 from resource.utils import import_object
 
-from .signer import make_token, load_data
+from .signer import make_token
 
 
 class TokenView(View):
@@ -34,22 +34,21 @@ class TokenView(View):
         if expires is None:
             expires = settings.TOKEN_EXPIRES
 
-        key = self.token_user.get_key(username, password)
-        if key is None:
+        pk, secret = self.token_user.get_key(username, password)
+        if pk is None or secret is None:
             token = None
             expires = 0
         else:
-            token = make_token(settings.SECRET_KEY, {'key': key}, expires)
+            token_data = {'pk': pk, 'secret': secret}
+            token = make_token(settings.SECRET_KEY, token_data, expires)
 
-        return Response({'token': token, 'expires': expires},
+        return Response({'id': pk, 'token': token, 'expires': expires},
                         status=status.HTTP_201_CREATED)
 
     def delete(self, pk):
-        """Invalidate the token given as `pk`."""
-        data = load_data(settings.SECRET_KEY, pk)
-        if data is None:
+        """Invalidate the token related to the user matches `pk`."""
+        ok = self.token_user.invalidate_key(pk)
+        if not ok:
             raise NotFoundError()
-
-        self.token_user.invalidate_key(data['key'])
 
         return Response(status=status.HTTP_204_NO_CONTENT)
