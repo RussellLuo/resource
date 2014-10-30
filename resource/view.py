@@ -19,7 +19,8 @@ def serialized(arg=None):
             try:
                 response = method(self, **kwargs)
             except BaseError as e:
-                return Response(e.detail, e.status_code, e.headers)
+                content = {'message': e.detail}
+                return Response(content, e.status_code, e.headers)
 
             # serialize special arguments from response
             if isinstance(response.content, (list, tuple)):
