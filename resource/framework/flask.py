@@ -47,7 +47,11 @@ def make_view(view):
             self.view = view
 
         def get_query_params(self, request):
-            return request.args.to_dict()
+            params = {
+                k: v if len(v) > 1 else v[0]
+                for k, v in request.args.iterlists()
+            }
+            return params
 
         def get_auth_params(self, request):
             auth = request.authorization

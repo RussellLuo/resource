@@ -78,7 +78,7 @@ def make_view(view):
         def get_query_params(self, request):
             params = {
                 k: v if len(v) > 1 else v[0]
-                for k, v in request.GET.items()
+                for k, v in request.GET.iteritems()
             }
             return params
 
