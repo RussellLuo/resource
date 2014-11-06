@@ -10,7 +10,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 
-URI = 'http://127.0.0.1:8000/users/'
+URI = 'http://127.0.0.1:5000/users/'
 
 
 class MongoUserTest(unittest.TestCase):

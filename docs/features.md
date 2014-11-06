@@ -186,6 +186,28 @@ Then, you can filter users with `date_joined_gt` and `date_joined_lt` like this:
     $ curl http://127.0.0.1:5000/users/?date_joined_gt=datetime(2014-10-01T00:00:00Z)&date_joined_lt=datetime(2014-10-03T00:00:00Z)
 
 
+### DuFilter
+
+`Resource` is shipped with a class `DuFilter`, which supports double-underscore style filtering.
+
+With the help of `DuFilter`, you can filter resources like this (without any extra code):
+
+    $ curl http://127.0.0.1:5000/users/?username__in=russell&username__in=tracey
+    $ curl http://127.0.0.1:5000/users/?date_joined__gt=datetime(2014-10-01T00:00:00Z)&date_joined__lt=datetime(2014-10-03T00:00:00Z)
+
+Below is the full list of Comparison Operators that `DuFilter` supports:
+
+Comparison Operators | Meaning               | Example
+-------------------- | --------------------- | -----------------------------------------------
+ne                   | not equal             | username__ne=russell
+lt                   | less than             | date_joined__lt=datetime(2014-10-01T00:00:00Z)
+lte                  | less than or equal    | date_joined__lte=datetime(2014-10-01T00:00:00Z)
+gt                   | greater than          | date_joined__gt=datetime(2014-10-01T00:00:00Z)
+gte                  | greater than or equal | date_joined__gte=datetime(2014-10-01T00:00:00Z)
+in                   | within range          | `username__in`=russell&`username__in`=tracey
+like                 | regex match           | username__like=^russ
+
+
 Pagination
 ----------
 

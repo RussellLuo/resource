@@ -29,7 +29,7 @@ Additional requirements for Flask demos
     (env)$ cd demo/django-mongodb
     (env)$ export PYTHONPATH=.:../..
     (env)$ # start mongodb server (e.g. sudo mongod)
-    (env)$ python manage.py runserver.py
+    (env)$ python manage.py runserver 5000
 
 #### flask-dbviewer
 
@@ -52,6 +52,13 @@ Additional requirements for Flask demos
 #### token-login
 
     (env)$ cd demo/token-login
+    (env)$ export PYTHONPATH=.:../..
+    (env)$ # start mongodb server (e.g. sudo mongod)
+    (env)$ python runserver.py
+
+#### dufilter
+
+    (env)$ cd demo/dufilter
     (env)$ export PYTHONPATH=.:../..
     (env)$ # start mongodb server (e.g. sudo mongod)
     (env)$ python runserver.py
@@ -80,3 +87,10 @@ Run Test
 
     (env)$ # Run Test
     (env)$ python tests/test_token.py
+
+### Test DuFilter
+
+    (env)$ # Run dufilter demo
+
+    (env)$ # Run Test
+    (env)$ python tests/test_dufilter.py
