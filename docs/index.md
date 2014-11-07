@@ -10,7 +10,7 @@ Philosophy
 You have data somewhere:
 
 1. physical data stored in databases like MongoDB (NoSQL) or MySQL (RDBMS)
-2. virtual data existed in applications
+2. virtual data existing in applications (e.g. data in business logic)
 
 and you want to expose it to your users through a RESTful Web API. `Resource` is a convenient library that allows you to do so.
 
