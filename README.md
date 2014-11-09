@@ -17,6 +17,20 @@ and you want to expose it to your users through a RESTful Web API. `Resource` is
 `Resource` is database agnostic and web framework agnostic, which means you should/can choose databases (MongoDB, MySQL, etc.) and web frameworks (Flask, Django, etc.) yourself.
 
 
+Installation
+------------
+
+Install `Resource` with `pip`:
+
+    $ pip install Resource
+
+Install development version from `GitHub`:
+
+    $ git clone https://github.com/RussellLuo/resource.git
+    $ cd resource
+    $ python setup.py install
+
+
 Features
 --------
 
