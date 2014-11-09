@@ -5,8 +5,8 @@ import uuid
 
 from bson import ObjectId
 
-from resource import settings
-from resource.contrib.token import TokenUser
+from rsrc import settings
+from rsrc.contrib.token import TokenUser
 
 
 db = settings.DB

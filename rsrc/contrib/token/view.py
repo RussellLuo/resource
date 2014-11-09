@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from resource import settings, View, Response, status
-from resource.exceptions import NotFoundError
-from resource.utils import import_object
+from rsrc import settings, View, Response, status
+from rsrc.exceptions import NotFoundError
+from rsrc.utils import import_object
 
 from .signer import make_token
 

@@ -6,11 +6,11 @@ os.environ['RESOURCE_SETTINGS_MODULE'] = 'settings'
 
 from flask import Flask
 
-from resource import settings, Resource, BasicAuth
-from resource.contrib.root import Root
-from resource.contrib.db.mongo import Collection, MongoSerializer
-from resource.contrib.token import TokenAuth, TokenView
-from resource.framework.flask import add_resource, make_root
+from rsrc import settings, Resource, BasicAuth
+from rsrc.contrib.root import Root
+from rsrc.contrib.db.mongo import Collection, MongoSerializer
+from rsrc.contrib.token import TokenAuth, TokenView
+from rsrc.framework.flask import add_resource, make_root
 
 
 db = settings.DB

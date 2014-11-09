@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from resource import settings, BasicAuth
-from resource.utils import import_object
+from rsrc import settings, BasicAuth
+from rsrc.utils import import_object
 
 from .signer import load_data
 

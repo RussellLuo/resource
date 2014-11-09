@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from resource import Filter
+from rsrc import Filter
 
 
 class DuFilter(Filter):

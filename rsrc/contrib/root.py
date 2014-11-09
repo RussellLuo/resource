@@ -3,7 +3,7 @@
 
 from operator import itemgetter
 
-from resource import settings, View, Response
+from rsrc import settings, View, Response
 
 
 class Root(View):

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from bson import ObjectId
 
-from resource import settings
+from rsrc import settings
 
 
 serialize_schema = {

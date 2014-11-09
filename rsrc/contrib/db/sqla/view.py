@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from jsonpatch import JsonPatch
 from mongosql import MongoQuery
 
-from resource import View, Response, status
-from resource.exceptions import (
+from rsrc import View, Response, status
+from rsrc.exceptions import (
     get_exception_detail, BaseError, NotFoundError
 )
 

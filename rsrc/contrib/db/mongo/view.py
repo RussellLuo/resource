@@ -4,8 +4,8 @@
 import bson
 from jsonpatch import JsonPatch
 
-from resource import View, Response, status
-from resource.exceptions import get_exception_detail, NotFoundError
+from rsrc import View, Response, status
+from rsrc.exceptions import get_exception_detail, NotFoundError
 
 
 class Collection(View):

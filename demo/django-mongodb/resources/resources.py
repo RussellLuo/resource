@@ -5,9 +5,9 @@ from datetime import datetime
 
 from pymongo import MongoClient
 
-from resource import Resource, Form, Filter, BasicAuth
-from resource.contrib.root import Root
-from resource.contrib.db.mongo import Collection, MongoSerializer
+from rsrc import Resource, Form, Filter, BasicAuth
+from rsrc.contrib.root import Root
+from rsrc.contrib.db.mongo import Collection, MongoSerializer
 
 
 DB = MongoClient().test

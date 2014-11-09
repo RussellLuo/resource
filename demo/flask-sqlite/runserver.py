@@ -6,10 +6,10 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from flask import Flask
 
-from resource import Resource, Form, Filter, BasicAuth
-from resource.contrib.root import Root
-from resource.contrib.db.sqla import Table, SqlaSerializer
-from resource.framework.flask import add_resource, make_root
+from rsrc import Resource, Form, Filter, BasicAuth
+from rsrc.contrib.root import Root
+from rsrc.contrib.db.sqla import Table, SqlaSerializer
+from rsrc.framework.flask import add_resource, make_root
 
 
 DB = create_engine('sqlite:///sqlite.db')
