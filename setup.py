@@ -10,12 +10,12 @@ install_requires = [
     'pymongo==2.7.2',
     'SQLAlchemy==0.9.7',
     'jsonform==0.0.1',
-    'py-mongosql==1.2.1-0',
+    'mongosql<=1.2.2',
 ]
 
 dependency_links = [
     'https://github.com/RussellLuo/jsonform/archive/master.zip#egg=jsonform-0.0.1',
-    'https://github.com/RussellLuo/py-mongosql/archive/master.zip#egg=py-mongosql-1.2.1-0',
+    'https://github.com/RussellLuo/py-mongosql/archive/master.zip#egg=mongosql-1.2.2',
 ]
 
 setup(
