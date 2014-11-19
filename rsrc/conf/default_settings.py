@@ -17,10 +17,10 @@ PER_PAGE = 20
 
 
 # ## Default Authorizer Class
-AUTH = 'resource.BasicAuth'
+AUTH = 'rsrc.BasicAuth'
 
 
 # ## Default settings for token
 SECRET_KEY = 'your-own-secret-key'
 TOKEN_EXPIRES = 3600
-TOKEN_USER = 'resource.contrib.token.TokenUser'
+TOKEN_USER = 'rsrc.contrib.token.TokenUser'

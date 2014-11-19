@@ -1,7 +1,7 @@
 Resource
 ========
 
-A library concentrated on the Resource layer of RESTful API.
+A Python library concentrated on the Resource layer of RESTful APIs.
 
 
 Philosophy
