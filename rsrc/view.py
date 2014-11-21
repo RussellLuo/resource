@@ -24,7 +24,9 @@ def serialized(arg=None):
 
             # serialize special arguments from response
             if self.serializer:
-                response.content = self.serializer.serialize(response.content)
+                response.content = self.serializer.serialize(
+                    response.content, settings.WITH_TYPE_NAME
+                )
 
             return response
         return decorator

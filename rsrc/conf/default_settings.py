@@ -7,6 +7,11 @@
 DOMAIN_NAME = ''
 
 
+# ## Default Serializing scheme
+# serialize data and bind it with type names
+WITH_TYPE_NAME = False
+
+
 # ## Default Date and time Format
 # using UTC Format, see http://www.w3.org/TR/NOTE-datetime for details
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
