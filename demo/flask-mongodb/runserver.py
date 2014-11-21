@@ -8,7 +8,7 @@ from flask import Flask
 
 from rsrc import Resource, Form, Filter, BasicAuth
 from rsrc.contrib.root import Root
-from rsrc.contrib.db.mongo import Collection, MongoSerializer
+from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.framework.flask import add_resource, make_root
 
 
@@ -55,8 +55,8 @@ class UserFilter(Filter):
 
 
 resources = [
-    Resource('users', Collection, form_cls=UserForm,
-             serializer_cls=MongoSerializer, filter_cls=UserFilter,
+    Resource('users', Collection, serializer=serializer,
+             form_cls=UserForm, filter_cls=UserFilter,
              auth_cls=UserAuth, kwargs={'db': DB, 'table_name': 'user'})
 ]
 

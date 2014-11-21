@@ -9,6 +9,5 @@ from .view import View
 from .form import Form
 from .response import Response
 from . import status
-from .serializer import Serializer
 from .filter import Filter
 from .auth import BasicAuth

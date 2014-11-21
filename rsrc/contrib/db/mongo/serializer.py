@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rsrc import Serializer
-from ..shared_schema import (
-    get_serialize_schema, get_deserialize_schema
-)
+from jsonsir import Serializer
+from jsonsir.contrib.intencoder import IntEncoder
+from jsonsir.contrib.boolencoder import BoolEncoder
+from jsonsir.contrib.regexencoder import RegexEncoder
+from jsonsir.contrib.objectidencoder import ObjectIdEncoder
+from jsonsir.contrib.datetimeencoder import DateTimeEncoder
 
 
-class MongoSerializer(Serializer):
-
-    serialize_schema = get_serialize_schema(['regex', 'objectid', 'datetime'])
-
-    deserialize_schema = get_deserialize_schema([
-        'int', 'bool', 'regex', 'objectid', 'datetime'
-    ])
+# instantiate `Serializer` (bound with specified encoders)
+serializer = Serializer([
+    IntEncoder(),
+    BoolEncoder(),
+    RegexEncoder(),
+    ObjectIdEncoder(),
+    DateTimeEncoder('%Y-%m-%dT%H:%M:%SZ'),
+])

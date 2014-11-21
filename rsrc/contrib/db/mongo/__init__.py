@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 from .view import Collection
-from .serializer import MongoSerializer
+from .serializer import serializer

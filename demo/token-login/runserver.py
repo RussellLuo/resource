@@ -8,7 +8,7 @@ from flask import Flask
 
 from rsrc import settings, Resource, BasicAuth
 from rsrc.contrib.root import Root
-from rsrc.contrib.db.mongo import Collection, MongoSerializer
+from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.contrib.token import TokenAuth, TokenView
 from rsrc.framework.flask import add_resource, make_root
 
@@ -38,8 +38,8 @@ class AllowPOSTAuth(TokenAuth):
 
 resources = [
     Resource('tokens', TokenView, auth_cls=AllowPOSTAuth),
-    Resource('users', Collection, auth_cls=AllowPOSTAuth,
-             serializer_cls=MongoSerializer,
+    Resource('users', Collection, serializer=serializer,
+             auth_cls=AllowPOSTAuth,
              kwargs={'db': settings.DB, 'table_name': 'user'})
 ]
 

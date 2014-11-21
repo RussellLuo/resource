@@ -13,7 +13,7 @@ def serialized(arg=None):
         @functools.wraps(method)
         def decorator(self, **kwargs):
             # deserialize special arguments from request
-            if arg in kwargs:
+            if arg in kwargs and self.serializer:
                 kwargs[arg] = self.serializer.deserialize(kwargs[arg])
 
             try:
@@ -23,10 +23,7 @@ def serialized(arg=None):
                 return Response(content, e.status_code, e.headers)
 
             # serialize special arguments from response
-            if isinstance(response.content, (list, tuple)):
-                response.content = map(self.serializer.serialize,
-                                       response.content)
-            else:
+            if self.serializer:
                 response.content = self.serializer.serialize(response.content)
 
             return response
@@ -36,11 +33,11 @@ def serialized(arg=None):
 
 class View(object):
 
-    def __init__(self, uri, form_cls, serializer_cls,
+    def __init__(self, uri, serializer, form_cls,
                  filter_cls, auth_cls, **kwargs):
         self.uri = uri
+        self.serializer = serializer
         self.form_cls = form_cls
-        self.serializer = serializer_cls()
         self.filter = filter_cls(**kwargs)
         self.auth = auth_cls()
         self.__dict__.update(kwargs)

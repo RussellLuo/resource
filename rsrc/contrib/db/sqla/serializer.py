@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rsrc import Serializer
-from ..shared_schema import (
-    get_serialize_schema, get_deserialize_schema
-)
+from jsonsir import Serializer
+from jsonsir.contrib.intencoder import IntEncoder
+from jsonsir.contrib.boolencoder import BoolEncoder
+from jsonsir.contrib.datetimeencoder import DateTimeEncoder
 
 
-class SqlaSerializer(Serializer):
-
-    serialize_schema = get_serialize_schema(['datetime'])
-
-    deserialize_schema = get_deserialize_schema(['int', 'bool', 'datetime'])
+# instantiate `Serializer` (bound with specified encoders)
+serializer = Serializer([
+    IntEncoder(),
+    BoolEncoder(),
+    DateTimeEncoder('%Y-%m-%dT%H:%M:%SZ'),
+])

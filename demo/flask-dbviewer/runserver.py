@@ -11,7 +11,7 @@ from flask import Flask
 
 from rsrc import Resource, BasicAuth
 from rsrc.contrib.root import Root
-from rsrc.contrib.db.mongo import Collection, MongoSerializer
+from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.framework.flask import add_resource, make_root
 
 
@@ -29,7 +29,7 @@ class TrivialAuth(BasicAuth):
 def get_resources(db):
     resources = [
         Resource(name, Collection,
-                 serializer_cls=MongoSerializer, auth_cls=TrivialAuth,
+                 serializer=serializer, auth_cls=TrivialAuth,
                  kwargs={'db': db, 'table_name': name})
         for name in db.collection_names()
     ]

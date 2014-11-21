@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 from .view import Table
-from .serializer import SqlaSerializer
+from .serializer import serializer

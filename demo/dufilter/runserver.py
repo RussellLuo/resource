@@ -6,7 +6,7 @@ from flask import Flask
 
 from rsrc import Resource, BasicAuth
 from rsrc.contrib.root import Root
-from rsrc.contrib.db.mongo import Collection, MongoSerializer
+from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.contrib.dufilter import DuFilter
 from rsrc.framework.flask import add_resource, make_root
 
@@ -20,7 +20,7 @@ class MyAuth(BasicAuth):
 
 
 resources = [
-    Resource('users', Collection, serializer_cls=MongoSerializer,
+    Resource('users', Collection, serializer=serializer,
              filter_cls=DuFilter, auth_cls=MyAuth,
              kwargs={'db': DB, 'table_name': 'user'})
 ]
