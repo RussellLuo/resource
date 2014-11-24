@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-description = 'A library concentrated on the Resource layer of RESTful API.'
+description = 'A Python library concentrated on the Resource layer of RESTful APIs.'
 
 install_requires = [
     'jsonpatch==1.7',
@@ -25,6 +25,9 @@ setup(
     version='0.1.2',
     author='RussellLuo',
     author_email='luopeng.he@gmail.com',
+    maintainer='RussellLuo',
+    maintainer_email='luopeng.he@gmail.com',
+    keywords='Resource, REST, Python',
     description=description,
     license='MIT',
     long_description=description,

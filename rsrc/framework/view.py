@@ -10,10 +10,10 @@ import functools
 def response(method):
     @functools.wraps(method)
     def decorator(self, *args, **kwargs):
-        res = method(self, *args, **kwargs)
-        content = json.dumps(res.content)
-        res.headers.update({'Content-Type': 'application/json'})
-        return self.make_response(content, res.status, res.headers)
+        resp = method(self, *args, **kwargs)
+        content = json.dumps(resp.content)
+        resp.headers.update({'Content-Type': 'application/json'})
+        return self.make_response(content, resp.status, resp.headers)
     return decorator
 
 
