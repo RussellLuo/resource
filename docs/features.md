@@ -113,6 +113,8 @@ Please refer to [JsonForm][3] for exact validation schema.
 Intelligent and Extensible Serializer
 -------------------------------------
 
+Please refer to [JsonSir][4] for serialization details.
+
 ### Deserialize Schema
 
 Convert request data (in JSON/Query-Parameter) to Python type:
@@ -134,18 +136,18 @@ If you set `DATE_FORMAT` to "%Y-%m-%d %H:%M:%S", then:
 
 Convert response data (in Python) to JSON:
 
-Value in Python                           | Value in JSON
------------------------------------------ | --------------------------
-10                                        | 10
-True                                      | true
-"string"                                  | "string"
-re._pattern_type                          | "/russ/"
-bson.ObjectId("543934671d41c812802711f3") | "543934671d41c812802711f3"
-datetime.datetime(2014, 10, 11)           | "2014-10-11T00:00:00Z"
+Value in Python                           | Value in JSON              | Value in JSON (`WITH_TYPE_NAME` == True)
+----------------------------------------- | -------------------------- | --------------------------
+10                                        | 10                         | 10
+True                                      | true                       | true
+"string"                                  | "string"                   | "string"
+re._pattern_type                          | "/russ/"                   | "regex(/russ/)"
+bson.ObjectId("543934671d41c812802711f3") | "543934671d41c812802711f3" | "objectid(543934671d41c812802711f3)"
+datetime.datetime(2014, 10, 11)           | "2014-10-11T00:00:00Z"     | "datetime(2014-10-11T00:00:00Z)"
 
 If you set `DATE_FORMAT` to "%Y-%m-%d %H:%M:%S", then:
 
-    datetime.datetime(2014, 10, 11) => "2014-10-11 00:00:00"
+    datetime.datetime(2014, 10, 11) => "2014-10-11 00:00:00" => "datetime(2014-10-11 00:00:00)"
 
 
 Filtering
@@ -405,5 +407,4 @@ See [Demo & Test](demo.md).
 [1]: http://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 [2]: http://tools.ietf.org/html/rfc6902
 [3]: https://github.com/RussellLuo/jsonform
-[4]: http://docs.sqlalchemy.org/en/latest/orm/extensions/automap.html
-[5]: https://sqlsoup.readthedocs.org/en/latest/index.html
+[4]: https://github.com/RussellLuo/jsonsir
