@@ -20,6 +20,11 @@ class MongoTokenUser(TokenUser):
         if not user:
             return None, None
 
+        # set `jwt_secret` if it does not exist
+        if not user.get('jwt_secret'):
+            user['jwt_secret'] = str(uuid.uuid4())
+            db.user.save(user)
+
         return str(user['_id']), user['jwt_secret']
 
     @classmethod
