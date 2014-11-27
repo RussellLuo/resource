@@ -22,7 +22,7 @@ dependency_links = [
 
 setup(
     name='Resource',
-    version='0.1.2',
+    version='0.1.3',
     author='RussellLuo',
     author_email='luopeng.he@gmail.com',
     maintainer='RussellLuo',
