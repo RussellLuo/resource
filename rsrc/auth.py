@@ -21,13 +21,14 @@ class BasicAuth(object):
 
         auth_params = auth_params or {}
         if not self.authenticated(method, auth_params):
-            headers = {
-                'WWW-Authenticate': 'Basic realm:"resource"'
-            }
-            raise UnauthorizedError(headers=headers)
+            raise UnauthorizedError(headers=self.make_headers())
 
         if not self.authorized():
             raise ForbiddenError()
+
+    def make_headers(self):
+        """The response headers when authentication fails."""
+        return {'WWW-Authenticate': 'Basic realm:"resource"'}
 
     def authenticated(self, method, auth_params):
         """Authenticate the user with credentials in `auth_params`.
