@@ -4,6 +4,7 @@
 from operator import itemgetter
 
 from rsrc import settings, View, Response
+from rsrc.utils import normalize_uri
 
 
 class Root(View):
@@ -12,7 +13,10 @@ class Root(View):
     def __init__(self, *arg, **kwargs):
         super(Root, self).__init__(*arg, **kwargs)
         self.links = [
-            {'href': settings.DOMAIN_NAME + r.uri, 'title': r.name}
+            {
+                'href': normalize_uri(settings.DOMAIN_NAME + r.uri),
+                'title': r.name
+            }
             for r in self.resources
         ]
 

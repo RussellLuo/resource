@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls import patterns, url
+from rsrc.utils import normalize_uri
 
 from .view import ProxyView
 
@@ -114,7 +115,7 @@ def make_view(view):
 
 
 def get_args(resource):
-    uri = resource.uri
+    uri = resource.uri.rstrip('/')
     if uri.startswith('/'):
         uri = uri[1:]
     endpoint = str(resource.name)
@@ -136,9 +137,9 @@ def url_rule(regex, view_cls, kwargs=None, methods=None):
 def add_resource(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
-        url_rule(r'^%s$' % uri, view_cls, {pk: None},
+        url_rule(r'^%s$' % normalize_uri(uri), view_cls, {pk: None},
                  methods=['GET', 'POST']),
-        url_rule(r'^%s(?P<pk>\w+)/$' % uri, view_cls,
+        url_rule(r'^%s$' % normalize_uri('%s/(?P<pk>\w+)' % uri), view_cls,
                  methods=['GET', 'PUT', 'PATCH', 'DELETE'])
     )
     return urlpatterns
@@ -147,6 +148,7 @@ def add_resource(resource, pk='pk'):
 def make_root(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
-        url_rule(r'^%s$' % uri, view_cls, {pk: None}, methods=['GET']),
+        url_rule(r'^%s$' % normalize_uri(uri), view_cls, {pk: None},
+                 methods=['GET']),
     )
     return urlpatterns

@@ -31,3 +31,22 @@ def import_object(name):
         return getattr(obj, parts[-1])
     except AttributeError:
         raise ImportError("No module named %s" % parts[-1])
+
+
+def normalize_uri(uri):
+    """Normalize `uri` according to `settings.TRAILING_SLASH`.
+
+    settings.TRAILING_SLASH | uri               | normalized
+    ----------------------- | ----------------- | -----------------
+    True                    | '/'               | '/'
+    True                    | 'www.github.com'  | 'www.github.com/'
+    True                    | 'www.github.com/' | 'www.github.com/'
+    False                   | '/'               | '/'
+    False                   | 'www.github.com'  | 'www.github.com'
+    False                   | 'www.github.com/' | 'www.github.com'
+    """
+    from rsrc import settings
+    normalized = uri.rstrip('/')
+    if settings.TRAILING_SLASH:
+        normalized = normalized + '/'
+    return normalized or '/'

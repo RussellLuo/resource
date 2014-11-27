@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 from flask import request, current_app as app
 from flask.views import MethodView
+from rsrc.utils import normalize_uri
 
 from .view import ProxyView
 
@@ -77,7 +78,7 @@ def make_view(view):
 
 
 def get_args(resource):
-    uri = resource.uri
+    uri = resource.uri.rstrip('/')
     endpoint = str(resource.name)
     view_cls = make_view(resource.view)
     view_func = view_cls.as_view(endpoint)
@@ -87,15 +88,15 @@ def get_args(resource):
 def add_resource(app, resource, pk='pk'):
     uri, endpoint, view_func = get_args(resource)
 
-    app.add_url_rule(uri, defaults={pk: None},
+    app.add_url_rule(normalize_uri(uri), defaults={pk: None},
                      view_func=view_func, methods=['GET'])
-    app.add_url_rule(uri, view_func=view_func, methods=['POST'])
-    app.add_url_rule('%s<%s>/' % (uri, pk), view_func=view_func,
+    app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['POST'])
+    app.add_url_rule(normalize_uri('%s/<%s>' % (uri, pk)), view_func=view_func,
                      methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 
 
 def make_root(app, resource, pk='pk'):
     uri, endpoint, view_func = get_args(resource)
 
-    app.add_url_rule(uri, defaults={pk: None},
+    app.add_url_rule(normalize_uri(uri), defaults={pk: None},
                      view_func=view_func, methods=['GET'])
