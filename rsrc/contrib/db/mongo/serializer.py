@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from rsrc import settings
 from jsonsir import Serializer
 from jsonsir.contrib.intencoder import IntEncoder
 from jsonsir.contrib.boolencoder import BoolEncoder
@@ -15,5 +16,5 @@ serializer = Serializer([
     BoolEncoder(),
     RegexEncoder(),
     ObjectIdEncoder(),
-    DateTimeEncoder('%Y-%m-%dT%H:%M:%SZ'),
+    DateTimeEncoder(settings.DATE_FORMAT),
 ])
