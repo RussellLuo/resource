@@ -69,14 +69,17 @@ class Root(View):
             for item in content
         ]
 
-    def get_list(self, page, per_page, sort, fields, lookup):
-        content = self.do_filtering(self.links, lookup)
+    def get_list(self, request):
+        page = request.kwargs['page']
+        per_page = request.kwargs['per_page']
+
+        content = self.do_filtering(self.links, request.kwargs['lookup'])
         count = len(content)
 
         content = self.do_paginating(content, page, per_page)
         headers = self.make_pagination_headers(page, per_page, count)
 
-        content = self.do_sorting(content, sort)
-        content = self.do_fields_selecting(content, fields)
+        content = self.do_sorting(content, request.kwargs['sort'])
+        content = self.do_fields_selecting(content, request.kwargs['fields'])
 
         return Response(content, headers=headers)

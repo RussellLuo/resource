@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
+
 
 class Filter(object):
     """Class for complex filtering.
@@ -28,6 +30,7 @@ class Filter(object):
         self.table_name = kwargs.get('table_name')
 
     def query(self, query_params):
+        query_params = copy.deepcopy(query_params)
         conditions = {}
         for attr_name in dir(self):
             if attr_name.startswith('query_'):

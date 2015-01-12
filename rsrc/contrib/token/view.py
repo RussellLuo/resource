@@ -23,9 +23,11 @@ class TokenView(View):
 
     token_user = import_object(settings.TOKEN_USER)
 
-    def post(self, data):
+    def post(self, request):
         """Make a token based on `uesrname`, `password` and `expires`.
         """
+        data = request.data
+
         username = data.get('username')
         password = data.get('password')
 
@@ -45,7 +47,7 @@ class TokenView(View):
         return Response({'id': pk, 'token': token, 'expires': expires},
                         status=status.HTTP_201_CREATED)
 
-    def delete(self, pk):
+    def delete(self, request, pk):
         """Invalidate the token related to the user matches `pk`."""
         ok = self.token_user.invalidate_key(pk)
         if not ok:

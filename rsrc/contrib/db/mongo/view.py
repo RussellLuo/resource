@@ -40,29 +40,33 @@ class Collection(View):
             mongo_fields.update({'_id': False})
         return mongo_fields
 
-    def get_list(self, page, per_page, sort, fields, lookup):
+    def get_list(self, request):
+        page = request.kwargs['page']
+        per_page = request.kwargs['per_page']
+        lookup = request.kwargs['lookup']
+
         skip, limit = (page - 1) * per_page, per_page
-        fields = self.to_mongo_fields(fields)
+        fields = self.to_mongo_fields(request.kwargs['fields'])
         docs = self.engine.find(
             spec=lookup, skip=skip, limit=limit,
-            sort=sort, fields=fields
+            sort=request.kwargs['sort'], fields=fields
         )
         count = self.engine.find(spec=lookup).count()
         headers = self.make_pagination_headers(page, per_page, count)
         return Response(list(docs), headers=headers)
 
-    def get_item(self, pk):
+    def get_item(self, request, pk):
         return Response(self.get_doc(pk))
 
-    def post(self, data):
-        form = self.form_cls(data)
+    def post(self, request):
+        form = self.form_cls(request.data)
         if form.is_valid():
             _id = self.engine.insert(form.document)
             return Response({'_id': _id}, status=status.HTTP_201_CREATED)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, pk, data):
-        form = self.form_cls(data)
+    def put(self, request, pk):
+        form = self.form_cls(request.data)
         if form.is_valid():
             doc = form.document
             doc.update({'_id': self.get_pk(pk)})
@@ -71,11 +75,11 @@ class Collection(View):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, pk, data):
+    def patch(self, request, pk):
         doc = self.get_doc(pk)
 
         # do JSON-Patch
-        patch_data = JsonPatch(data)
+        patch_data = JsonPatch(request.data)
         try:
             patch_data.apply(doc, in_place=True)
         except Exception as e:
@@ -89,7 +93,7 @@ class Collection(View):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, pk):
+    def delete(self, request, pk):
         doc = self.get_doc(pk)
         self.engine.remove({'_id': doc['_id']})
         return Response(status=status.HTTP_204_NO_CONTENT)

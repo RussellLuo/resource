@@ -7,6 +7,7 @@ from .conf import settings
 from .resource import Resource
 from .view import View
 from .form import Form
+from .request import Request
 from .response import Response
 from . import status
 from .filter import Filter

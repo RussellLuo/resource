@@ -8,29 +8,30 @@ from .response import Response
 from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
 
 
-def serialized(arg=None):
-    def wrapper(method):
-        @functools.wraps(method)
-        def decorator(self, **kwargs):
-            # deserialize special arguments from request
-            if arg in kwargs and self.serializer:
-                kwargs[arg] = self.serializer.deserialize(kwargs[arg])
+def serialized(method):
+    @functools.wraps(method)
+    def decorator(self, request, *args, **kwargs):
+        # deserialize special arguments from request
+        if self.serializer:
+            request.data = self.serializer.deserialize(request.data)
+            request.query_params = self.serializer.deserialize(
+                request.query_params
+            )
 
-            try:
-                response = method(self, **kwargs)
-            except BaseError as e:
-                content = {'message': e.detail}
-                return Response(content, e.status_code, e.headers)
+        try:
+            response = method(self, request, *args, **kwargs)
+        except BaseError as e:
+            content = {'message': e.detail}
+            return Response(content, e.status_code, e.headers)
 
-            # serialize special arguments from response
-            if self.serializer:
-                response.content = self.serializer.serialize(
-                    response.content, settings.WITH_TYPE_NAME
-                )
+        # serialize special arguments from response
+        if self.serializer:
+            response.content = self.serializer.serialize(
+                response.content, settings.WITH_TYPE_NAME
+            )
 
-            return response
-        return decorator
-    return wrapper
+        return response
+    return decorator
 
 
 class View(object):
@@ -135,60 +136,64 @@ class View(object):
             selected = fields.split(',')
         return selected
 
-    @serialized('query_params')
-    def get_proxy(self, pk=None, query_params=None, auth_params=None):
+    @serialized
+    def get_proxy(self, request, pk=None):
         method = 'GET_LIST' if pk is None else 'GET_ITEM'
-        self.auth.check_auth(method, auth_params)
-        return self.get(pk, query_params)
+        self.auth.check_auth(method, request.kwargs['auth'])
+        return self.get(request, pk)
 
-    @serialized('data')
-    def post_proxy(self, data, auth_params=None):
-        self.auth.check_auth('POST', auth_params)
-        return self.post(data)
+    @serialized
+    def post_proxy(self, request):
+        self.auth.check_auth('POST', request.kwargs.get('auth'))
+        return self.post(request)
 
-    @serialized('data')
-    def put_proxy(self, pk, data, auth_params=None):
-        self.auth.check_auth('PUT', auth_params)
-        return self.put(pk, data)
+    @serialized
+    def put_proxy(self, request, pk):
+        self.auth.check_auth('PUT', request.kwargs.get('auth'))
+        return self.put(request, pk)
 
-    @serialized('data')
-    def patch_proxy(self, pk, data, auth_params=None):
-        self.auth.check_auth('PATCH', auth_params)
-        return self.patch(pk, data)
+    @serialized
+    def patch_proxy(self, request, pk):
+        self.auth.check_auth('PATCH', request.kwargs.get('auth'))
+        return self.patch(request, pk)
 
-    @serialized()
-    def delete_proxy(self, pk, auth_params=None):
-        self.auth.check_auth('DELETE', auth_params)
-        return self.delete(pk)
+    @serialized
+    def delete_proxy(self, request, pk):
+        self.auth.check_auth('DELETE', request.kwargs.get('auth'))
+        return self.delete(request, pk)
 
     def get_pk(self, pk):
         raise NotFoundError()
 
-    def get(self, pk=None, query_params=None):
+    def get(self, request, pk=None):
         if pk is None:
-            query_params = query_params or {}
+            query_params = request.query_params
             page, per_page = self.get_pagination_args(query_params)
-            sort = self.get_sort_args(query_params)
-            fields = self.get_fields_selected(query_params)
-            lookup = self.filter.query(query_params)
-            return self.get_list(page, per_page, sort, fields, lookup)
+            request.kwargs.update(
+                page=page,
+                per_page=per_page,
+                sort=self.get_sort_args(query_params),
+                fields=self.get_fields_selected(query_params),
+                lookup=self.filter.query(query_params)
+            )
+            return self.get_list(request)
         else:
-            return self.get_item(pk)
+            return self.get_item(request, pk)
 
-    def get_list(self, page, per_page, sort, fields, lookup):
+    def get_list(self, request):
         raise MethodNotAllowedError()
 
-    def get_item(self, pk):
+    def get_item(self, request, pk):
         raise MethodNotAllowedError()
 
-    def post(self, data):
+    def post(self, request):
         raise MethodNotAllowedError()
 
-    def put(self, pk, data):
+    def put(self, request, pk):
         raise MethodNotAllowedError()
 
-    def patch(self, pk, data):
+    def patch(self, request, pk):
         raise MethodNotAllowedError()
 
-    def delete(self, pk):
+    def delete(self, request, pk):
         raise MethodNotAllowedError()

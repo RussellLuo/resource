@@ -6,6 +6,8 @@ from __future__ import absolute_import
 import json
 import functools
 
+from rsrc import Request
+
 
 def response(method):
     @functools.wraps(method)
@@ -40,40 +42,31 @@ class ProxyView(object):
     def make_response(self, content, status, headers):
         raise NotImplementedError()
 
+    def make_request(self, raw_request):
+        request = Request(
+            method=raw_request.method,
+            data=self.get_data(raw_request),
+            query_params=self.get_query_params(raw_request),
+            kwargs=dict(auth=self.get_auth_params(raw_request))
+        )
+        return request
+
     @response
     def get(self, request, pk=None):
-        return self.view.get_proxy(
-            pk=pk,
-            query_params=self.get_query_params(request),
-            auth_params=self.get_auth_params(request)
-        )
+        return self.view.get_proxy(self.make_request(request), pk=pk)
 
     @response
     def post(self, request):
-        return self.view.post_proxy(
-            data=self.get_data(request),
-            auth_params=self.get_auth_params(request)
-        )
+        return self.view.post_proxy(self.make_request(request))
 
     @response
     def put(self, request, pk):
-        return self.view.put_proxy(
-            pk=pk,
-            data=self.get_data(request),
-            auth_params=self.get_auth_params(request)
-        )
+        return self.view.put_proxy(self.make_request(request), pk=pk)
 
     @response
     def patch(self, request, pk):
-        return self.view.patch_proxy(
-            pk=pk,
-            data=self.get_data(request),
-            auth_params=self.get_auth_params(request)
-        )
+        return self.view.patch_proxy(self.make_request(request), pk=pk)
 
     @response
     def delete(self, request, pk):
-        return self.view.delete_proxy(
-            pk=pk,
-            auth_params=self.get_auth_params(request)
-        )
+        return self.view.delete_proxy(self.make_request(request), pk=pk)
