@@ -52,21 +52,21 @@ class ProxyView(object):
         return request
 
     @response
-    def get(self, request, pk=None):
-        return self.view.get_proxy(self.make_request(request), pk=pk)
+    def get(self, request, **kwargs):
+        return self.view.get_proxy(self.make_request(request), **kwargs)
 
     @response
-    def post(self, request):
-        return self.view.post_proxy(self.make_request(request))
+    def post(self, request, **kwargs):
+        return self.view.post_proxy(self.make_request(request, **kwargs))
 
     @response
-    def put(self, request, pk):
-        return self.view.put_proxy(self.make_request(request), pk=pk)
+    def put(self, request, **kwargs):
+        return self.view.put_proxy(self.make_request(request), **kwargs)
 
     @response
-    def patch(self, request, pk):
-        return self.view.patch_proxy(self.make_request(request), pk=pk)
+    def patch(self, request, **kwargs):
+        return self.view.patch_proxy(self.make_request(request), **kwargs)
 
     @response
-    def delete(self, request, pk):
-        return self.view.delete_proxy(self.make_request(request), pk=pk)
+    def delete(self, request, **kwargs):
+        return self.view.delete_proxy(self.make_request(request), **kwargs)

@@ -10,7 +10,7 @@ from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
 
 def serialized(method):
     @functools.wraps(method)
-    def decorator(self, request, *args, **kwargs):
+    def decorator(self, request, **kwargs):
         # deserialize special arguments from request
         if self.serializer:
             request.data = self.serializer.deserialize(request.data)
@@ -19,7 +19,7 @@ def serialized(method):
             )
 
         try:
-            response = method(self, request, *args, **kwargs)
+            response = method(self, request, **kwargs)
         except BaseError as e:
             content = {'message': e.detail}
             return Response(content, e.status_code, e.headers)
@@ -137,36 +137,36 @@ class View(object):
         return selected
 
     @serialized
-    def get_proxy(self, request, pk=None):
-        method = 'GET_LIST' if pk is None else 'GET_ITEM'
+    def get_proxy(self, request, **kwargs):
+        method = 'GET_LIST' if kwargs.get('pk') is None else 'GET_ITEM'
         self.auth.check_auth(method, request.kwargs['auth'])
-        return self.get(request, pk)
+        return self.get(request, **kwargs)
 
     @serialized
-    def post_proxy(self, request):
+    def post_proxy(self, request, **kwargs):
         self.auth.check_auth('POST', request.kwargs.get('auth'))
-        return self.post(request)
+        return self.post(request, **kwargs)
 
     @serialized
-    def put_proxy(self, request, pk):
+    def put_proxy(self, request, **kwargs):
         self.auth.check_auth('PUT', request.kwargs.get('auth'))
-        return self.put(request, pk)
+        return self.put(request, **kwargs)
 
     @serialized
-    def patch_proxy(self, request, pk):
+    def patch_proxy(self, request, **kwargs):
         self.auth.check_auth('PATCH', request.kwargs.get('auth'))
-        return self.patch(request, pk)
+        return self.patch(request, **kwargs)
 
     @serialized
-    def delete_proxy(self, request, pk):
+    def delete_proxy(self, request, **kwargs):
         self.auth.check_auth('DELETE', request.kwargs.get('auth'))
-        return self.delete(request, pk)
+        return self.delete(request, **kwargs)
 
     def get_pk(self, pk):
         raise NotFoundError()
 
-    def get(self, request, pk=None):
-        if pk is None:
+    def get(self, request, **kwargs):
+        if kwargs.get('pk') is None:
             query_params = request.query_params
             page, per_page = self.get_pagination_args(query_params)
             request.kwargs.update(
@@ -176,24 +176,24 @@ class View(object):
                 fields=self.get_fields_selected(query_params),
                 lookup=self.filter.query(query_params)
             )
-            return self.get_list(request)
+            return self.get_list(request, **kwargs)
         else:
-            return self.get_item(request, pk)
+            return self.get_item(request, **kwargs)
 
-    def get_list(self, request):
+    def get_list(self, request, **kwargs):
         raise MethodNotAllowedError()
 
-    def get_item(self, request, pk):
+    def get_item(self, request, **kwargs):
         raise MethodNotAllowedError()
 
-    def post(self, request):
+    def post(self, request, **kwargs):
         raise MethodNotAllowedError()
 
-    def put(self, request, pk):
+    def put(self, request, **kwargs):
         raise MethodNotAllowedError()
 
-    def patch(self, request, pk):
+    def patch(self, request, **kwargs):
         raise MethodNotAllowedError()
 
-    def delete(self, request, pk):
+    def delete(self, request, **kwargs):
         raise MethodNotAllowedError()

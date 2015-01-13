@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import
 
+import re
 import json
 import base64
 
@@ -118,6 +119,9 @@ def get_args(resource):
     uri = resource.uri.rstrip('/')
     if uri.startswith('/'):
         uri = uri[1:]
+    # change `uri` from Flask-style to Django-style
+    uri = re.sub(r'<(\w+)>', r'(?P<\1>\w+)', uri)
+
     endpoint = str(resource.name)
     view_cls = make_view(resource.view)
     return uri, endpoint, view_cls
@@ -137,7 +141,7 @@ def url_rule(regex, view_cls, kwargs=None, methods=None):
 def add_resource(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
-        url_rule(r'^%s$' % normalize_uri(uri), view_cls, {pk: None},
+        url_rule(r'^%s$' % normalize_uri(uri), view_cls,
                  methods=['GET', 'POST']),
         url_rule(r'^%s$' % normalize_uri('%s/(?P<pk>\w+)' % uri), view_cls,
                  methods=['GET', 'PUT', 'PATCH', 'DELETE'])
@@ -148,7 +152,6 @@ def add_resource(resource, pk='pk'):
 def make_root(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
-        url_rule(r'^%s$' % normalize_uri(uri), view_cls, {pk: None},
-                 methods=['GET']),
+        url_rule(r'^%s$' % normalize_uri(uri), view_cls, methods=['GET'])
     )
     return urlpatterns
