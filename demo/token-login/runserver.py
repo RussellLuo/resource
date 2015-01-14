@@ -6,7 +6,7 @@ os.environ['RESOURCE_SETTINGS_MODULE'] = 'settings'
 
 from flask import Flask
 
-from rsrc import settings, Resource, BasicAuth
+from rsrc import settings, Resource
 from rsrc.contrib.root import Root
 from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.contrib.token import TokenAuth, TokenView
@@ -14,11 +14,6 @@ from rsrc.framework.flask import add_resource, make_root
 
 
 db = settings.DB
-
-
-class NoAuth(BasicAuth):
-    def authenticated(self, method, auth_params):
-        return True
 
 
 class AllowPOSTAuth(TokenAuth):
@@ -51,7 +46,7 @@ if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
 
-    root = Resource('root', Root, uri='/', auth_cls=NoAuth,
+    root = Resource('root', Root, uri='/',
                     kwargs={'resources': resources})
     make_root(app, root)
 

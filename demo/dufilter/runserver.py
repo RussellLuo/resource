@@ -4,7 +4,7 @@
 from pymongo import MongoClient
 from flask import Flask
 
-from rsrc import Resource, BasicAuth
+from rsrc import Resource
 from rsrc.contrib.root import Root
 from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.contrib.dufilter import DuFilter
@@ -14,14 +14,9 @@ from rsrc.framework.flask import add_resource, make_root
 DB = MongoClient().test
 
 
-class MyAuth(BasicAuth):
-    def authenticated(self, method, auth_params):
-        return True
-
-
 resources = [
     Resource('users', Collection, serializer=serializer,
-             filter_cls=DuFilter, auth_cls=MyAuth,
+             filter_cls=DuFilter,
              kwargs={'db': DB, 'table_name': 'user'})
 ]
 
@@ -33,7 +28,7 @@ if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
 
-    root = Resource('root', Root, uri='/', auth_cls=MyAuth,
+    root = Resource('root', Root, uri='/',
                     kwargs={'resources': resources})
     make_root(app, root)
 

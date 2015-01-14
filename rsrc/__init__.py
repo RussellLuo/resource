@@ -11,4 +11,4 @@ from .request import Request
 from .response import Response
 from . import status
 from .filter import Filter
-from .auth import BasicAuth
+from .auth import Auth, BasicAuth

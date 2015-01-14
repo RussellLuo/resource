@@ -28,7 +28,7 @@ PER_PAGE = 20
 
 
 # ## Default Authorizer Class
-AUTH = 'rsrc.BasicAuth'
+AUTH = 'rsrc.Auth'
 
 
 # ## Default settings for token

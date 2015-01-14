@@ -6,18 +6,13 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from flask import Flask
 
-from rsrc import Resource, Form, Filter, BasicAuth
+from rsrc import Resource, Form, Filter
 from rsrc.contrib.root import Root
 from rsrc.contrib.db.sqla import Table, serializer
 from rsrc.framework.flask import add_resource, make_root
 
 
 DB = create_engine('sqlite:///sqlite.db')
-
-
-class UserAuth(BasicAuth):
-    def authenticated(self, method, auth_params):
-        return True
 
 
 class UserForm(Form):
@@ -57,7 +52,7 @@ class UserFilter(Filter):
 resources = [
     Resource('users', Table, serializer=serializer,
              form_cls=UserForm, filter_cls=UserFilter,
-             auth_cls=UserAuth, kwargs={'db': DB, 'table_name': 'user'})
+             kwargs={'db': DB, 'table_name': 'user'})
 ]
 
 
@@ -68,7 +63,7 @@ if __name__ == '__main__':
     for r in resources:
         add_resource(app, r)
 
-    root = Resource('root', Root, uri='/', auth_cls=UserAuth,
+    root = Resource('root', Root, uri='/',
                     kwargs={'resources': resources})
     make_root(app, root)
 

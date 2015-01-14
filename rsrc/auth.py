@@ -6,7 +6,14 @@ from .exceptions import (
 )
 
 
-class BasicAuth(object):
+class Auth(object):
+    """The base class of Authentication."""
+
+    def check_auth(self, method, auth_params=None):
+        pass
+
+
+class BasicAuth(Auth):
     """Basic Authentication."""
 
     # inherent limit of the resource
