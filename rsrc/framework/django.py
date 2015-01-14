@@ -128,7 +128,7 @@ def get_args(resource):
 
 
 def url_rule(regex, view_cls, kwargs=None, methods=None):
-    methods = methods or ['GET', 'POST', 'PUT', 'DELETE']
+    methods = methods or ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
     methods = map(lambda m: m.lower(), methods)
 
     # set `http_method_names` on instance-level of `view_cls`
@@ -142,7 +142,7 @@ def add_resource(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
         url_rule(r'^%s$' % normalize_uri(uri), view_cls,
-                 methods=['GET', 'POST']),
+                 methods=['GET', 'POST', 'DELETE']),
         url_rule(r'^%s$' % normalize_uri('%s/(?P<pk>\w+)' % uri), view_cls,
                  methods=['GET', 'PUT', 'PATCH', 'DELETE'])
     )

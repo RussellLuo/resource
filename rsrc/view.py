@@ -159,7 +159,8 @@ class View(object):
 
     @serialized
     def delete_proxy(self, request, **kwargs):
-        self.auth.check_auth('DELETE', request.kwargs.get('auth'))
+        method = 'DELETE_LIST' if kwargs.get('pk') is None else 'DELETE_ITEM'
+        self.auth.check_auth(method, request.kwargs.get('auth'))
         return self.delete(request, **kwargs)
 
     def get_pk(self, pk):
@@ -196,4 +197,13 @@ class View(object):
         raise MethodNotAllowedError()
 
     def delete(self, request, **kwargs):
+        if kwargs.get('pk') is None:
+            return self.delete_list(request, **kwargs)
+        else:
+            return self.delete_item(request, **kwargs)
+
+    def delete_list(self, request, **kwargs):
+        raise MethodNotAllowedError()
+
+    def delete_item(self, request, **kwargs):
         raise MethodNotAllowedError()

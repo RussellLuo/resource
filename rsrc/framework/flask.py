@@ -90,6 +90,7 @@ def add_resource(app, resource, pk='pk'):
 
     app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['GET'])
     app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['POST'])
+    app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['DELETE'])
     app.add_url_rule(normalize_uri('%s/<%s>' % (uri, pk)), view_func=view_func,
                      methods=['GET', 'PUT', 'PATCH', 'DELETE'])
 

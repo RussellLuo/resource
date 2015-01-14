@@ -19,7 +19,8 @@ class BasicAuth(Auth):
     # inherent limit of the resource
     allowed_methods = (
         'GET_LIST', 'GET_ITEM',
-        'POST', 'PUT', 'PATCH', 'DELETE'
+        'POST', 'PUT', 'PATCH',
+        'DELETE_LIST', 'DELETE_ITEM'
     )
 
     def check_auth(self, method, auth_params=None):
