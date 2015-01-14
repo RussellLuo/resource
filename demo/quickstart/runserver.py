@@ -3,6 +3,7 @@
 
 from flask import Flask
 from rsrc import Resource, View, Response, status
+from rsrc.exceptions import NotFoundError
 from rsrc.framework.flask import add_resource
 
 todos = {
@@ -17,7 +18,10 @@ class Todo(View):
 
     def get_item(self, request, pk):
         pk = int(pk)
-        return Response(todos.get(pk, {}))
+        try:
+            return Response(todos[pk])
+        except KeyError:
+            raise NotFoundError()
 
     def post(self, request):
         pk = len(todos) + 1
@@ -33,13 +37,23 @@ class Todo(View):
 
     def patch(self, request, pk):
         pk = int(pk)
-        todos[pk].update(request.data)
+        try:
+            todos[pk].update(request.data)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except KeyError:
+            raise NotFoundError()
+
+    def delete_list(self, request):
+        todos.clear()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def delete(self, request, pk):
+    def delete_item(self, request, pk):
         pk = int(pk)
-        del todos[pk]
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            del todos[pk]
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except KeyError:
+            raise NotFoundError()
 
 
 resource = Resource('todos', Todo)
