@@ -93,7 +93,11 @@ class Collection(View):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete_list(self, request):
+        self.engine.remove()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete_item(self, request, pk):
         doc = self.get_doc(pk)
         self.engine.remove({'_id': doc['_id']})
         return Response(status=status.HTTP_204_NO_CONTENT)

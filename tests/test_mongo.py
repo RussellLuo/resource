@@ -189,7 +189,7 @@ class MongoUserTest(unittest.TestCase):
         self.assertEqual(user['password'], '123**678')
         self.assertEqual(user['date_joined'], datetime(2014, 9, 28, 22))
 
-    def test_delete(self):
+    def test_delete_one(self):
         _id = str(self.db.user.insert({
             'name': 'tracey2076',
             'password': '123456',
@@ -204,6 +204,17 @@ class MongoUserTest(unittest.TestCase):
         # validate database
         user = self.db.user.find_one({'_id': ObjectId(_id)})
         self.assertFalse(bool(user))
+
+    def test_delete_all(self):
+        resp = requests.delete(URI)
+
+        # validate response
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(resp.text, '')
+
+        # validate database
+        user_count = self.db.user.count()
+        self.assertEqual(user_count, 0)
 
 
 if __name__ == '__main__':

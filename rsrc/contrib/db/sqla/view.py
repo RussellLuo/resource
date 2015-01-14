@@ -132,7 +132,12 @@ class Table(View):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete_list(self, request):
+        self.query.delete()
+        self.session.commit()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def delete_item(self, request, pk):
         row = self.get_row(pk)
         self.session.delete(row)
         self.session.commit()

@@ -198,7 +198,7 @@ class SqlaUserTest(unittest.TestCase):
         self.assertEqual(user.password, '123**678')
         self.assertEqual(user.date_joined, datetime(2014, 9, 28, 22))
 
-    def test_delete(self):
+    def test_delete_one(self):
         id = self.add_row(
             name='tracey2076',
             password='123456',
@@ -213,6 +213,17 @@ class SqlaUserTest(unittest.TestCase):
         # validate database
         user = self.query.get(id)
         self.assertFalse(bool(user))
+
+    def test_delete_all(self):
+        resp = requests.delete(URI)
+
+        # validate response
+        self.assertEqual(resp.status_code, 204)
+        self.assertEqual(resp.text, '')
+
+        # validate database
+        user_count = self.query.count()
+        self.assertEqual(user_count, 0)
 
 
 if __name__ == '__main__':
