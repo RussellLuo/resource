@@ -24,6 +24,16 @@ Additional requirements for Flask demos
 
 ### 2. run demo server
 
+#### quickstart
+
+    (venv)$ export PYTHONPATH=.
+    (venv)$ python demo/quickstart/runserver.py
+
+#### mini-trello
+
+    (venv)$ export PYTHONPATH=.
+    (venv)$ python demo/mini-trello/runserver.py
+
 #### django-mongodb
 
     (venv)$ cd demo/django-mongodb

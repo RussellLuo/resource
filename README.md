@@ -43,6 +43,7 @@ Features
 + Sorting
 + Fields Selection
 + Authentication
++ Sub Resources
 + Support MongoDB
 + Support RDBMS
 + Support Flask

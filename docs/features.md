@@ -15,7 +15,7 @@ Create  | POST      | List
 Read    | GET       | List/Item
 Update  | PATCH     | Item
 Replace | PUT       | Item
-Delete  | DELETE    | Item
+Delete  | DELETE    | List/Item
 
 ### POST
 
@@ -73,6 +73,17 @@ Please refer to [RFC 6902][2] for the exact `JSON Patch` syntax.
     Date: Sat, 11 Oct 2014 13:49:00 GMT
 
 ### DELETE
+
+Delete a list of items.
+
+    $ curl -i -X DELETE http://127.0.0.1:5000/users/
+    HTTP/1.0 204 NO CONTENT
+    Content-Type: application/json
+    Content-Length: 0
+    Server: Werkzeug/0.9.6 Python/2.7.3
+    Date: Sat, 11 Oct 2014 14:02:00 GMT
+
+Delete a single item.
 
     $ curl -i -X DELETE http://127.0.0.1:5000/users/543934671d41c812802711f3/
     HTTP/1.0 204 NO CONTENT
@@ -257,13 +268,7 @@ Authentication
 
 #### 1. No authentication
 
-    from resource import BasicAuth
-
-    class NoAuth(BasicAuth):
-        def authenticated(self, method, auth_params):
-            return True
-
-For resources protected by `NoAuth`, you can access them without credentials:
+For resources protected by `Auth`, you can access them without credentials:
 
     $ curl http://127.0.0.1:5000/<resource>/
 
@@ -366,6 +371,14 @@ Then, you can get a token and use it by following the steps below:
         $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/<resource>/
 
 
+Sub Resources
+-------------
+
+Endpoints support sub-resources, in which you can have URI like: `/lists/<list_id>/cards`.
+
+See [demo/mini-trello][5] for example.
+
+
 Support MongoDB
 ---------------
 
@@ -408,3 +421,4 @@ See [Demo & Test](demo.md).
 [2]: http://tools.ietf.org/html/rfc6902
 [3]: https://github.com/RussellLuo/jsonform
 [4]: https://github.com/RussellLuo/jsonsir
+[5]: https://github.com/RussellLuo/resource/tree/master/demo/mini-trello
