@@ -10,7 +10,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 
-URI = 'http://127.0.0.1:5000/users/'
+URI = 'http://127.0.0.1:5000/users'
 
 
 class MongoUserTest(unittest.TestCase):
@@ -151,7 +151,7 @@ class MongoUserTest(unittest.TestCase):
             'password': '12345678',
             'date_joined': 'datetime(2014-09-28T00:00:00Z)'
         }
-        resp = requests.put('%s%s/' % (URI, self.id),
+        resp = requests.put('%s/%s' % (URI, self.id),
                             data=json.dumps(data), headers=self.headers)
 
         # validate response
@@ -176,7 +176,7 @@ class MongoUserTest(unittest.TestCase):
             {'op': 'add', 'path': '/date_joined',
              'value': 'datetime(2014-09-28T22:00:00Z)'}
         ]
-        resp = requests.patch('%s%s/' % (URI, self.id),
+        resp = requests.patch('%s/%s' % (URI, self.id),
                                data=json.dumps(data), headers=self.headers)
 
         # validate response
@@ -195,7 +195,7 @@ class MongoUserTest(unittest.TestCase):
             'password': '123456',
             'date_joined': datetime(2014, 9, 27)
         }))
-        resp = requests.delete('%s%s/' % (URI, _id))
+        resp = requests.delete('%s/%s' % (URI, _id))
 
         # validate response
         self.assertEqual(resp.status_code, 204)

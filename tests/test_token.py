@@ -15,8 +15,8 @@ DOMAIN = 'http://127.0.0.1:5000'
 
 class TestBase(unittest.TestCase):
 
-    TOKEN_URI = DOMAIN + '/tokens/'
-    USER_URI = DOMAIN + '/users/'
+    TOKEN_URI = DOMAIN + '/tokens'
+    USER_URI = DOMAIN + '/users'
 
     def setUp(self):
         self.db = MongoClient().test
@@ -43,7 +43,7 @@ class TestBase(unittest.TestCase):
         return resp
 
     def logout(self, id, token):
-        resp = requests.delete('%s%s/' % (self.TOKEN_URI, id),
+        resp = requests.delete('%s/%s' % (self.TOKEN_URI, id),
                                auth=(token, ''))
         return resp
 

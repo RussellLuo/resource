@@ -10,7 +10,7 @@ DOMAIN_NAME = ''
 # ## Default Trailing Slash scheme
 # When set to `True`, append a trailing slash mandatorily to every URLs.
 # When set to `False`, remove the trailing slash mandatorily from every URLs.
-TRAILING_SLASH = True
+TRAILING_SLASH = False
 
 
 # ## Default Serializing scheme

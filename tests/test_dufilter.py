@@ -8,7 +8,7 @@ import requests
 from pymongo import MongoClient
 
 
-URI = 'http://127.0.0.1:5000/users/'
+URI = 'http://127.0.0.1:5000/users'
 
 
 class MongoUserTest(unittest.TestCase):
