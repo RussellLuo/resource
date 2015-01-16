@@ -6,8 +6,8 @@ from setuptools import setup, find_packages
 description = 'A Python library concentrated on the Resource layer of RESTful APIs.'
 
 install_requires = [
-    'jsonform==0.0.1',
-    'jsonsir==0.0.1',
+    'JsonForm==0.0.2',
+    'JsonSir==0.0.2',
     'python-easyconfig==0.0.2',
     'jsonpatch==1.7',
     'pymongo==2.7.2',
@@ -17,8 +17,6 @@ install_requires = [
 ]
 
 dependency_links = [
-    'https://github.com/RussellLuo/jsonform/archive/master.zip#egg=jsonform-0.0.1',
-    'https://github.com/RussellLuo/jsonsir/archive/master.zip#egg=jsonsir-0.0.1',
     'https://github.com/RussellLuo/py-mongosql/archive/master.zip#egg=mongosql-1.2.2',
 ]
 
