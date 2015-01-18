@@ -1,0 +1,17 @@
+--requirement requirements.txt
+
+# For rsrc.contrib.db
+jsonpatch==1.7
+
+# For rsrc.contrib.db.mongo
+pymongo==2.7.2
+
+# For rsrc.contrib.db.sqla
+SQLAlchemy==0.9.7
+-e git+https://github.com/RussellLuo/py-mongosql.git#egg=py-mongosql
+
+# For rsrc.contrib.token
+itsdangerous==0.24
+
+# For tests
+requests==2.4.1

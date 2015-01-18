@@ -1,9 +1,3 @@
--e git+https://github.com/RussellLuo/jsonform.git#egg=jsonform
--e git+https://github.com/RussellLuo/jsonsir.git#egg=jsonsir
-python-easyconfig==0.0.2
-jsonpatch==1.7
-pymongo==2.7.2
-SQLAlchemy==0.9.7
--e git+https://github.com/RussellLuo/py-mongosql.git#egg=py-mongosql
-itsdangerous==0.24
-requests==2.4.1
+python-easyconfig>=0.1.0
+JsonForm>=0.0.2
+JsonSir>=0.0.2
