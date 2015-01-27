@@ -27,6 +27,13 @@ DATE_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 PER_PAGE = 20
 
 
+# ## Cross-Origin Options
+CROSS_ORIGIN = False  # disabled
+ACCESS_CONTROL_ALLOW_ORIGIN = '*'  # any domain
+ACCESS_CONTROL_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+ACCESS_CONTROL_MAX_AGE = 864000  # 10 days
+
+
 # ## Default Authorizer Class
 AUTH = 'rsrc.Auth'
 

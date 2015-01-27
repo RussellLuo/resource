@@ -88,11 +88,10 @@ def get_args(resource):
 def add_resource(app, resource, pk='pk'):
     uri, endpoint, view_func = get_args(resource)
 
-    app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['GET'])
-    app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['POST'])
-    app.add_url_rule(normalize_uri(uri), view_func=view_func, methods=['DELETE'])
+    app.add_url_rule(normalize_uri(uri), view_func=view_func,
+                     methods=['OPTIONS', 'GET', 'POST', 'DELETE'])
     app.add_url_rule(normalize_uri('%s/<%s>' % (uri, pk)), view_func=view_func,
-                     methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+                     methods=['OPTIONS', 'GET', 'PUT', 'PATCH', 'DELETE'])
 
 
 def make_root(app, resource, pk='pk'):

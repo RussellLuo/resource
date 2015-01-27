@@ -52,6 +52,10 @@ class ProxyView(object):
         return request
 
     @response
+    def options(self, request, **kwargs):
+        return self.view.options_proxy(self.make_request(request), **kwargs)
+
+    @response
     def get(self, request, **kwargs):
         return self.view.get_proxy(self.make_request(request), **kwargs)
 

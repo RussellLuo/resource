@@ -142,9 +142,9 @@ def add_resource(resource, pk='pk'):
     uri, _, view_cls = get_args(resource)
     urlpatterns = patterns('',
         url_rule(r'^%s$' % normalize_uri(uri), view_cls,
-                 methods=['GET', 'POST', 'DELETE']),
+                 methods=['OPTIONS', 'GET', 'POST', 'DELETE']),
         url_rule(r'^%s$' % normalize_uri('%s/(?P<pk>\w+)' % uri), view_cls,
-                 methods=['GET', 'PUT', 'PATCH', 'DELETE'])
+                 methods=['OPTIONS', 'GET', 'PUT', 'PATCH', 'DELETE'])
     )
     return urlpatterns
 
