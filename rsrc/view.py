@@ -30,6 +30,11 @@ def serialized(method):
                 response.content, settings.WITH_TYPE_NAME
             )
 
+        # add essential headers for non-OPTIONS requests if in CORS
+        if settings.CROSS_ORIGIN and request.method != 'OPTIONS':
+            _, actual_headers = self.make_cross_origin_headers()
+            response.headers.update(actual_headers)
+
         return response
     return decorator
 
@@ -142,14 +147,24 @@ class View(object):
         allow_methods = allow_methods or settings.ACCESS_CONTROL_ALLOW_METHODS
         allow_headers = allow_headers or settings.ACCESS_CONTROL_ALLOW_HEADERS
         max_age = max_age or settings.ACCESS_CONTROL_MAX_AGE
+        vary = 'Origin'
 
-        headers = {
+        # the response headers for preflight requests
+        preflight_headers = {
             'Access-Control-Allow-Origin': allow_origin,
             'Access-Control-Allow-Methods': ', '.join(allow_methods),
             'Access-Control-Allow-Headers': ', '.join(allow_headers),
             'Access-Control-Max-Age': str(max_age),
+            'Vary': vary,
         }
-        return headers
+
+        # the response headers for actual requests
+        actual_headers = {
+            'Access-Control-Allow-Origin': allow_origin,
+            'Vary': vary,
+        }
+
+        return preflight_headers, actual_headers
 
     def options_proxy(self, request, **kwargs):
         return self.options(request, **kwargs)
@@ -189,7 +204,8 @@ class View(object):
             'Allow': 'GET, POST, PUT, PATCH, DELETE'
         }
         if settings.CROSS_ORIGIN:
-            headers.update(self.make_cross_origin_headers())
+            preflight_headers, _ = self.make_cross_origin_headers()
+            headers.update(preflight_headers)
         return Response(headers=headers)
 
     def get(self, request, **kwargs):
