@@ -137,18 +137,18 @@ class View(object):
         return selected
 
     def make_cross_origin_headers(self, allow_origin=None, allow_methods=None,
-                                  allow_headers=None, max_age=864000):
+                                  allow_headers=None, max_age=None):
         allow_origin = allow_origin or settings.ACCESS_CONTROL_ALLOW_ORIGIN
         allow_methods = allow_methods or settings.ACCESS_CONTROL_ALLOW_METHODS
+        allow_headers = allow_headers or settings.ACCESS_CONTROL_ALLOW_HEADERS
         max_age = max_age or settings.ACCESS_CONTROL_MAX_AGE
 
         headers = {
             'Access-Control-Allow-Origin': allow_origin,
             'Access-Control-Allow-Methods': ', '.join(allow_methods),
+            'Access-Control-Allow-Headers': ', '.join(allow_headers),
             'Access-Control-Max-Age': str(max_age),
         }
-        if allow_headers:
-            headers['Access-Control-Allow-Headers'] = ', '.join(allow_headers)
         return headers
 
     def options_proxy(self, request, **kwargs):
