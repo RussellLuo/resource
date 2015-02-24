@@ -6,6 +6,8 @@ import functools
 from .conf import settings
 from .response import Response
 from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
+from .utils import normalize_uri
+from .logger import logger
 
 
 def serialized(method):
@@ -17,6 +19,16 @@ def serialized(method):
             request.query_params = self.serializer.deserialize(
                 request.query_params
             )
+
+        # log request info
+        pk = kwargs.get('pk')
+        stripped_uri = self.uri.rstrip('/')
+        uri = '%s/%s' % (stripped_uri, pk) if pk else stripped_uri
+        message = '%s %s %s' % (
+            request.method, normalize_uri(uri),
+            request.data or request.query_params
+        )
+        logger.info(message)
 
         try:
             response = method(self, request, **kwargs)
