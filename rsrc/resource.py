@@ -4,7 +4,7 @@
 from .conf import settings
 from .form import Form
 from .filter import Filter
-from .utils import import_object
+from .utils import import_object, normalize_uri
 
 
 class Resource(object):
@@ -13,7 +13,7 @@ class Resource(object):
                  auth_cls=None, kwargs=None):
         kwargs = kwargs or {}
         self.name = name
-        self.uri = uri or '/%s/' % name
+        self.uri = normalize_uri(uri or '/%s' % name)
         auth_cls = auth_cls or import_object(settings.AUTH)
         self.view = view_cls(self.uri, serializer, form_cls,
                              filter_cls, auth_cls, **kwargs)
