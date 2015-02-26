@@ -104,7 +104,7 @@ Easy and Extensible Data Validation
 
 Please refer to [JsonForm][3] for exact validation schema.
 
-    from resource import Form
+    from rsrc import Form
 
     class UserForm(Form):
         def validate_datetime(value):
@@ -174,7 +174,7 @@ With multiple conditions in AND mode:
 
 By subclassing `Filter` class, you can do more complex filtering:
 
-    from resource import Filter
+    from rsrc import Filter
 
     class UserFilter(Filter):
         def query_date_range(self, query_params):
@@ -274,7 +274,7 @@ For resources protected by `Auth`, you can access them without credentials:
 
 #### 2. Simple authentication
 
-    from resource import BasicAuth
+    from rsrc import BasicAuth
 
     class SimpleAuth(BasicAuth):
         def authenticated(self, method, auth_params):
@@ -288,7 +288,7 @@ For resources protected by `SimpleAuth`, you must set `Authorization` header to 
 
 #### 3. Complex authentication
 
-    from resource import BasicAuth
+    from rsrc import BasicAuth
 
     class ComplexAuth(BasicAuth):
         def authenticated(self, method, auth_params):
@@ -318,7 +318,7 @@ But you must give credentials of a registered user to access these resources via
 First, you must subclass `TokenUser`:
 
     from bson import ObjectId
-    from resource.contrib.token import TokenUser
+    from rsrc.contrib.token import TokenUser
 
     class MongoTokenUser(TokenUser):
         @classmethod

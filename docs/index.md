@@ -31,6 +31,13 @@ Install development version from `GitHub`:
     $ python setup.py install
 
 
+Quickstart
+----------
+
++ [Todo](quickstart.md#todo)
++ [HTTP-verb and View-method](quickstart.md#http-verb-and-view-method)
+
+
 Features
 --------
 
