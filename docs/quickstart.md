@@ -82,12 +82,12 @@ HTTP-verb and View-method
 
 When you access the `todos` resource via different HTTP verbs, different methods of Todo view will be called. The following table shows the correspondence:
 
-HTTP Verb          | View Method
------------------- | ---------------
-GET    /todos      | Todo:get_list()
-POST   /todos      | Todo:post()
-DELETE /todos      | Todo:delete_list()
-GET    /todos/<pk> | Todo:get_item()
-PUT    /todos/<pk> | Todo:put()
-PATCH  /todos/<pk> | Todo:patch()
-DELETE /todos/<pk> | Todo:delete_item()
+HTTP Verb            | View Method
+-------------------- | ---------------
+GET    `/todos`      | Todo:get_list()
+POST   `/todos`      | Todo:post()
+DELETE `/todos`      | Todo:delete_list()
+GET    `/todos/<pk>` | Todo:get_item()
+PUT    `/todos/<pk>` | Todo:put()
+PATCH  `/todos/<pk>` | Todo:patch()
+DELETE `/todos/<pk>` | Todo:delete_item()
