@@ -8,6 +8,7 @@ import json
 import base64
 
 from django.views.generic import View as MethodView
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.conf import settings
@@ -96,7 +97,7 @@ def make_view(view):
                 response[key] = value
             return response
 
-        @csrf_exempt
+        @method_decorator(csrf_exempt)
         def dispatch(self, request, *args, **kwargs):
             """Override to make dispatch() CSRF exempt."""
             return super(View, self).dispatch(request, *args, **kwargs)
