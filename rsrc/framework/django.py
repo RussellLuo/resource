@@ -78,6 +78,9 @@ def make_view(view):
             super(View, self).__init__(**kwargs)
             self.view = view
 
+        def get_uri(self, request):
+            return request.build_absolute_uri()
+
         def get_query_params(self, request):
             params = {
                 k: v if len(v) > 1 else v[0]
@@ -91,9 +94,9 @@ def make_view(view):
         def get_data(self, request):
             return payload(request)
 
-        def make_response(self, content, status, headers):
-            response = HttpResponse(content, status=status)
-            for key, value in headers.items():
+        def make_response(self, data, status, headers):
+            response = HttpResponse(data, status=status)
+            for key, value in headers.iteritems():
                 response[key] = value
             return response
 

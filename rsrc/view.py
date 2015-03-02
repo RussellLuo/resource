@@ -6,7 +6,6 @@ import functools
 from .conf import settings
 from .response import Response
 from .exceptions import BaseError, NotFoundError, MethodNotAllowedError
-from .utils import normalize_uri
 from .logger import logger
 
 
@@ -21,31 +20,29 @@ def serialized(method):
             )
 
         # log request info
-        pk = kwargs.get('pk')
-        stripped_uri = self.uri.rstrip('/')
-        uri = '%s/%s' % (stripped_uri, pk) if pk else stripped_uri
-        message = '%s %s %s' % (
-            request.method, normalize_uri(uri),
-            request.data or request.query_params
-        )
+        message = '%s %s %s' % (request.method, request.uri, request.data)
         logger.info(message)
 
         try:
             response = method(self, request, **kwargs)
         except BaseError as e:
-            content = {'message': e.detail}
-            return Response(content, e.status_code, e.headers)
+            data = {'message': e.detail}
+            response = Response(data, e.status_code, e.headers)
 
         # serialize special arguments from response
         if self.serializer:
-            response.content = self.serializer.serialize(
-                response.content, settings.WITH_TYPE_NAME
+            response.data = self.serializer.serialize(
+                response.data, settings.WITH_TYPE_NAME
             )
 
         # add essential headers for non-OPTIONS requests if in CORS
         if settings.CROSS_ORIGIN and request.method != 'OPTIONS':
             _, actual_headers = self.make_cross_origin_headers()
             response.headers.update(actual_headers)
+
+        # log response info
+        message = '%s %s' % (response.status, response.data)
+        logger.info(message)
 
         return response
     return decorator

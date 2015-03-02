@@ -47,6 +47,9 @@ def make_view(view):
         def __init__(self):
             self.view = view
 
+        def get_uri(self, request):
+            return request.url
+
         def get_query_params(self, request):
             params = {
                 k: v if len(v) > 1 else v[0]
@@ -66,8 +69,8 @@ def make_view(view):
         def get_data(self, request):
             return payload(request)
 
-        def make_response(self, content, status, headers):
-            return app.make_response((content, status, headers))
+        def make_response(self, data, status, headers):
+            return app.make_response((data, status, headers))
 
         def dispatch_request(self, *args, **kwargs):
             """Override to add additional `request` parameter to meth()."""
