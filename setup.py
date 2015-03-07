@@ -13,7 +13,7 @@ install_requires = [
 
 setup(
     name='Resource',
-    version='0.1.5',
+    version='0.1.8',
     author='RussellLuo',
     author_email='luopeng.he@gmail.com',
     maintainer='RussellLuo',
