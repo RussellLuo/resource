@@ -14,4 +14,4 @@ SQLAlchemy==0.9.7
 itsdangerous==0.24
 
 # For tests
-requests==2.4.1
+python-crest>=0.1.6

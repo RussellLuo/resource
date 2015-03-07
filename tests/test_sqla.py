@@ -4,14 +4,13 @@
 import unittest
 from datetime import datetime
 
-import requests
-import json
 from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
+from crest import Resource
 
 
-URI = 'http://127.0.0.1:5000/users'
+API = Resource('http://127.0.0.1:5000')
 
 
 # Increase connection timeout of SQlite
@@ -51,22 +50,20 @@ class SqlaUserTest(unittest.TestCase):
             )
             self.extra_ids.append(id)
 
-        self.headers = {'content-type': 'application/json'}
-
     def tearDown(self):
         self.query.delete()
         self.session.commit()
 
     def test_get(self):
-        resp = requests.get(URI)
+        resp = API.users.get()
 
         # validate response
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.json()), 9)
 
     def test_get_by_simple_filter(self):
-        query_params = ['name=user_1']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
+        query_params = {'name': 'user_1'}
+        resp = API.users.get(params=query_params)
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -81,9 +78,11 @@ class SqlaUserTest(unittest.TestCase):
         )
 
     def test_get_by_complex_filter(self):
-        query_params = ['date_joined_gt=datetime(2014-10-01T00:00:00Z)',
-                        'date_joined_lt=datetime(2014-10-03T00:00:00Z)']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
+        query_params = {
+            'date_joined_gt': 'datetime(2014-10-01T00:00:00Z)',
+            'date_joined_lt': 'datetime(2014-10-03T00:00:00Z)'
+        }
+        resp = API.users.get(params=query_params)
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -98,8 +97,8 @@ class SqlaUserTest(unittest.TestCase):
         )
 
     def test_get_by_sort(self):
-        query_params = ['sort=date_joined']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
+        query_params = {'sort': 'date_joined'}
+        resp = API.users.get(params=query_params)
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -121,8 +120,8 @@ class SqlaUserTest(unittest.TestCase):
         self.assertEqual(resp.json(), expection)
 
     def test_get_by_fields(self):
-        query_params = ['sort=date_joined', 'fields=name,password']
-        resp = requests.get('%s?%s' % (URI, '&'.join(query_params)))
+        query_params = {'sort': 'date_joined', 'fields': 'name,password'}
+        resp = API.users.get(params=query_params)
 
         # validate response
         self.assertEqual(resp.status_code, 200)
@@ -145,7 +144,7 @@ class SqlaUserTest(unittest.TestCase):
             'password': '123456',
             'date_joined': 'datetime(2014-09-27T00:00:00Z)'
         }
-        resp = requests.post(URI, data=json.dumps(data), headers=self.headers)
+        resp = API.users.post(json=data)
 
         # validate response
         self.assertEqual(resp.status_code, 201)
@@ -165,8 +164,7 @@ class SqlaUserTest(unittest.TestCase):
             'password': '12345678',
             'date_joined': 'datetime(2014-09-28T00:00:00Z)'
         }
-        resp = requests.put('%s/%s' % (URI, self.id),
-                            data=json.dumps(data), headers=self.headers)
+        resp = API.users[self.id].put(json=data)
 
         # validate response
         self.assertEqual(resp.status_code, 204)
@@ -185,8 +183,7 @@ class SqlaUserTest(unittest.TestCase):
             {'op': 'add', 'path': '/date_joined',
              'value': 'datetime(2014-09-28T22:00:00Z)'}
         ]
-        resp = requests.patch('%s/%s' % (URI, self.id),
-                               data=json.dumps(data), headers=self.headers)
+        resp = API.users[self.id].patch(json=data)
 
         # validate response
         self.assertEqual(resp.status_code, 204)
@@ -204,7 +201,7 @@ class SqlaUserTest(unittest.TestCase):
             password='123456',
             date_joined=datetime(2014, 9, 27)
         )
-        resp = requests.delete('%s/%s' % (URI, id))
+        resp = API.users[id].delete()
 
         # validate response
         self.assertEqual(resp.status_code, 204)
@@ -215,7 +212,7 @@ class SqlaUserTest(unittest.TestCase):
         self.assertFalse(bool(user))
 
     def test_delete_all(self):
-        resp = requests.delete(URI)
+        resp = API.users.delete()
 
         # validate response
         self.assertEqual(resp.status_code, 204)

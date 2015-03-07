@@ -5,18 +5,14 @@ import uuid
 import unittest
 from datetime import datetime
 
-import requests
-import json
 from pymongo import MongoClient
+from crest import Resource
 
 
-DOMAIN = 'http://127.0.0.1:5000'
+API = Resource('http://127.0.0.1:5000')
 
 
 class TestBase(unittest.TestCase):
-
-    TOKEN_URI = DOMAIN + '/tokens'
-    USER_URI = DOMAIN + '/users'
 
     def setUp(self):
         self.db = MongoClient().test
@@ -28,8 +24,6 @@ class TestBase(unittest.TestCase):
             'jwt_secret': str(uuid.uuid4())
         })
 
-        self.headers = {'content-type': 'application/json'}
-
     def tearDown(self):
         self.db.user.remove()
 
@@ -38,13 +32,11 @@ class TestBase(unittest.TestCase):
             'username': username,
             'password': password,
         }
-        resp = requests.post(self.TOKEN_URI, data=json.dumps(data),
-                             headers=self.headers)
+        resp = API.tokens.post(json=data)
         return resp
 
     def logout(self, id, token):
-        resp = requests.delete('%s/%s' % (self.TOKEN_URI, id),
-                               auth=(token, ''))
+        resp = API.tokens[id].delete(auth=(token, ''))
         return resp
 
 
@@ -94,22 +86,22 @@ class TokenTest(TestBase):
 class UserTest(TestBase):
 
     def test_get_without_token(self):
-        resp = requests.get(self.USER_URI)
+        resp = API.users.get()
         self.assertEqual(resp.status_code, 401)
 
     def test_get_with_invalid_token(self):
-        resp = requests.get(self.USER_URI, auth=('anonymous', ''))
+        resp = API.users.get(auth=('anonymous', ''))
         self.assertEqual(resp.status_code, 401)
 
     def test_get_with_valid_token(self):
         token = self.login('russell', '123456').json()
-        resp = requests.get(self.USER_URI, auth=(token['token'], ''))
+        resp = API.users.get(auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 200)
 
     def test_get_login_logout(self):
         # after login, before logout, `token` is valid
         token = self.login('russell', '123456').json()
-        resp = requests.get(self.USER_URI, auth=(token['token'], ''))
+        resp = API.users.get(auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 200)
 
         # logout
@@ -117,7 +109,7 @@ class UserTest(TestBase):
         self.assertEqual(resp.status_code, 204)
 
         # after logout, `token` becomes invalid
-        resp = requests.get(self.USER_URI, auth=(token['token'], ''))
+        resp = API.users.get(auth=(token['token'], ''))
         self.assertEqual(resp.status_code, 401)
 
     def test_post(self):
@@ -127,8 +119,7 @@ class UserTest(TestBase):
             'password': '123456',
             'date_joined': 'datetime(2014-10-25T00:00:00Z)'
         }
-        resp = requests.post(self.USER_URI, data=json.dumps(data),
-                             headers=self.headers)
+        resp = API.users.post(json=data)
 
         self.assertEqual(resp.status_code, 201)
 
