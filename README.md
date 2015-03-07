@@ -44,6 +44,7 @@ Features
 + Fields Selection
 + Authentication
 + Sub Resources
++ Cross Origin
 + Support MongoDB
 + Support RDBMS
 + Support Flask

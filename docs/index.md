@@ -51,6 +51,7 @@ Features
 + [Fields Selection](features.md#fields-selection)
 + [Authentication](features.md#authentication)
 + [Sub Resources](features.md#sub-resources)
++ [Cross Origin](features.md#cross-origin)
 + [Support MongoDB](features.md#support-mongodb)
 + [Support RDBMS](features.md#support-rdbms)
 + [Support Flask](features.md#support-flask)

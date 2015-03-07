@@ -379,6 +379,19 @@ Endpoints support sub-resources, in which you can have URI like: `/lists/<list_i
 See [demo/mini-trello][5] for example.
 
 
+Cross Origin
+------------
+
+To enable Cross-Origin Resource Sharing (CORS) for your APIs, you should set `CROSS_ORIGIN = True` in settings. Some CORS control variables are available for you to custom the behaviour.
+
+CORS variable                | Default value
+---------------------------- | -----------------------------------------
+ACCESS_CONTROL_ALLOW_ORIGIN  | '*'  # any domain
+ACCESS_CONTROL_ALLOW_METHODS | ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+ACCESS_CONTROL_ALLOW_HEADERS | ['Content-Type']
+ACCESS_CONTROL_MAX_AGE       | 864000  # 10 days
+
+
 Support MongoDB
 ---------------
 
