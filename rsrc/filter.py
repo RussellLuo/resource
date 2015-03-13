@@ -2,10 +2,51 @@
 # -*- coding: utf-8 -*-
 
 import copy
+import functools
+
+
+def query_params(*names):
+    """A helper decorator for binding query-params specified by
+    `names` as arguments to `query_<name>` methods.
+
+    For example:
+
+        class UserFilter(Filter):
+            @query_params('username')
+            def query_username(self, username):
+                return {'username': username.upper()}
+
+            @query_params('date_joined_gt', 'date_joined_lt')
+            def query_datejoined(self, date_joined_gt=None, date_joined_lt=None):
+                conditions = {}
+                if date_joined_gt:
+                    conditions.update({'$gt': date_joined_gt})
+                if date_joined_lt:
+                    conditions.update({'$lt': date_joined_lt})
+                if conditions:
+                    return {'date_joined': conditions}
+                else:
+                    return {}
+    """
+    def wrapper(method):
+        @functools.wraps(method)
+        def decorator(self, params):
+            kwargs = {}
+            for name in names:
+                if name in params:
+                    value = params.pop(name)
+                    kwargs.update({name: value})
+            try:
+                return method(self, **kwargs)
+            except TypeError:
+                return {}
+        return decorator
+
+    return wrapper
 
 
 class Filter(object):
-    """Class for complex filtering.
+    """The Class for complex filtering.
 
     Except for simple filtering by query parameters, two more complex
     filtering schemes are to be supported:
@@ -29,12 +70,13 @@ class Filter(object):
         self.db = kwargs.get('db')
         self.table_name = kwargs.get('table_name')
 
-    def query(self, query_params):
-        query_params = copy.deepcopy(query_params)
+    def query(self, params):
+        params = copy.deepcopy(params)
         conditions = {}
         for attr_name in dir(self):
             if attr_name.startswith('query_'):
                 method = getattr(self, attr_name)
-                conditions.update(method(query_params))
-        conditions.update(query_params)
+                condition = method(params)
+                conditions.update(condition)
+        conditions.update(params)
         return conditions

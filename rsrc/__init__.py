@@ -10,5 +10,5 @@ from .form import Form
 from .request import Request
 from .response import Response
 from . import status
-from .filter import Filter
+from .filter import Filter, query_params
 from .auth import Auth, BasicAuth
