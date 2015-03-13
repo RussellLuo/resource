@@ -177,10 +177,30 @@ By subclassing `Filter` class, you can do more complex filtering:
     from rsrc import Filter
 
     class UserFilter(Filter):
-        def query_date_range(self, query_params):
-            date_joined_gt = query_params.pop('date_joined_gt', None)
-            date_joined_lt = query_params.pop('date_joined_lt', None)
+        def query_date_range(self, params):
+            date_joined_gt = params.pop('date_joined_gt', None)
+            date_joined_lt = params.pop('date_joined_lt', None)
 
+            conditions = {}
+
+            if date_joined_gt:
+                conditions.update({'$gt': date_joined_gt})
+
+            if date_joined_lt:
+                conditions.update({'$lt': date_joined_lt})
+
+            if conditions:
+                return {'date_joined': conditions}
+            else:
+                return {}
+
+Further, with the helper decorator `query_params`, you can simplify the above `UserFilter` like this:
+
+    from rsrc import Filter, query_params
+
+    class UserFilter(Filter):
+        @query_params('date_joined_gt', 'date_joined_lt')
+        def query_date_range(self, date_joined_gt=None, date_joined_lt=None):
             conditions = {}
 
             if date_joined_gt:

@@ -6,7 +6,7 @@ from datetime import datetime
 from pymongo import MongoClient
 from flask import Flask
 
-from rsrc import Resource, Form, Filter
+from rsrc import Resource, Form, Filter, query_params
 from rsrc.contrib.root import Root
 from rsrc.contrib.db.mongo import Collection, serializer
 from rsrc.framework.flask import add_resource, make_root
@@ -31,10 +31,8 @@ class UserForm(Form):
 
 
 class UserFilter(Filter):
-    def query_date_range(self, query_params):
-        date_joined_gt = query_params.pop('date_joined_gt', None)
-        date_joined_lt = query_params.pop('date_joined_lt', None)
-
+    @query_params('date_joined_gt', 'date_joined_lt')
+    def query_date_range(self, date_joined_gt=None, date_joined_lt=None):
         conditions = {}
 
         if date_joined_gt:

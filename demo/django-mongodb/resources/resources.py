@@ -29,9 +29,9 @@ class UserForm(Form):
 
 
 class UserFilter(Filter):
-    def query_date_range(self, query_params):
-        date_joined_gt = query_params.pop('date_joined_gt', None)
-        date_joined_lt = query_params.pop('date_joined_lt', None)
+    def query_date_range(self, params):
+        date_joined_gt = params.pop('date_joined_gt', None)
+        date_joined_lt = params.pop('date_joined_lt', None)
 
         conditions = {}
 
