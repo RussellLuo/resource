@@ -47,6 +47,7 @@ TOKEN_USER = 'rsrc.contrib.token.TokenUser'
 
 # ## Default settings for logger
 LOGGER_ENABLED = False
+LOGGER_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 LOGGER_LEVEL = 'DEBUG'
 LOGGER_FORMAT = '%(asctime)s.%(msecs)03d %(name)-10s %(levelname)-8s %(message)s'
 LOGGER_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'

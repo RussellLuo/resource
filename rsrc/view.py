@@ -20,8 +20,9 @@ def serialized(method):
             )
 
         # log request info
-        message = '%s %s %s' % (request.method, request.uri, request.data)
-        logger.info(message)
+        if request.method in settings.LOGGER_METHODS:
+            message = '%s %s %s' % (request.method, request.uri, request.data)
+            logger.info(message)
 
         try:
             response = method(self, request, **kwargs)
@@ -41,8 +42,9 @@ def serialized(method):
             response.headers.update(actual_headers)
 
         # log response info
-        message = '%s %s' % (response.status, response.data)
-        logger.info(message)
+        if request.method in settings.LOGGER_METHODS:
+            message = '%s %s' % (response.status, response.data)
+            logger.info(message)
 
         return response
     return decorator
