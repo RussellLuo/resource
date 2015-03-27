@@ -70,13 +70,27 @@ class Filter(object):
         self.db = kwargs.get('db')
         self.table_name = kwargs.get('table_name')
 
+    def merge(self, conditions):
+        """Merge `conditions` using AND-logic into one condition."""
+        if conditions:
+            return {'$and': conditions}
+        else:
+            return {}
+
     def query(self, params):
+        """Generate lookup conditions."""
         params = copy.deepcopy(params)
-        conditions = {}
+
+        conditions = []
         for attr_name in dir(self):
             if attr_name.startswith('query_'):
                 method = getattr(self, attr_name)
                 condition = method(params)
-                conditions.update(condition)
-        conditions.update(params)
-        return conditions
+                if condition:
+                    conditions.append(condition)
+
+        # also treat remaining `params` as conditions
+        if params:
+            conditions.append(params)
+
+        return self.merge(conditions)
