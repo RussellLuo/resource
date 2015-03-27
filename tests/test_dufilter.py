@@ -72,6 +72,18 @@ class MongoUserTest(unittest.TestCase):
         resp = API.users.get(params=query_params)
         self.validate_response(resp, ['user_1'])
 
+    def test_get_by_gt_and_lt(self):
+        query_params = {'date_joined__gt': 'datetime(2014-10-06T00:00:00Z)',
+                        'date_joined__lt': 'datetime(2014-10-08T00:00:00Z)'}
+        resp = API.users.get(params=query_params)
+        self.validate_response(resp, ['user_7'])
+
+    def test_get_by_gte_and_lte(self):
+        query_params = {'date_joined__gte': 'datetime(2014-10-06T00:00:00Z)',
+                        'date_joined__lte': 'datetime(2014-10-08T00:00:00Z)'}
+        resp = API.users.get(params=query_params)
+        self.validate_response(resp, ['user_6', 'user_7', 'user_8'])
+
 
 if __name__ == '__main__':
     unittest.main()
