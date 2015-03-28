@@ -80,8 +80,9 @@ class Filter(object):
     def query(self, params):
         """Generate lookup conditions."""
         params = copy.deepcopy(params)
-
         conditions = []
+
+        # collect conditions from `query_<name>` methods
         for attr_name in dir(self):
             if attr_name.startswith('query_'):
                 method = getattr(self, attr_name)
