@@ -19,7 +19,7 @@ Delete  | DELETE    | List/Item
 
 ### POST
 
-    $ curl -i -H "Content-Type: application/json" -d '{"name": "russell", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users/
+    $ curl -i -H "Content-Type: application/json" -d '{"name": "russell", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users
     HTTP/1.0 201 CREATED
     Content-Type: application/json
     Content-Length: 35
@@ -32,10 +32,11 @@ Delete  | DELETE    | List/Item
 
 Get a list of items.
 
-    $ curl -i http://127.0.0.1:5000/users/
+    $ curl -i http://127.0.0.1:5000/users
     HTTP/1.0 200 OK
     Content-Type: application/json
-    Content-Length: 2
+    X-Pagination-Info: page=1, per-page=10, count=1
+    Content-Length: 117
     Server: Werkzeug/0.9.6 Python/2.7.3
     Date: Mon, 22 Sep 2014 05:53:01 GMT
 
@@ -43,10 +44,10 @@ Get a list of items.
 
 Get a single item.
 
-    $ curl -i http://127.0.0.1:5000/users/543934671d41c812802711f3/
+    $ curl -i http://127.0.0.1:5000/users/543934671d41c812802711f3
     HTTP/1.0 200 OK
     Content-Type: application/json
-    Content-Length: 2
+    Content-Length: 115
     Server: Werkzeug/0.9.6 Python/2.7.3
     Date: Mon, 22 Sep 2014 05:53:01 GMT
 
@@ -56,7 +57,7 @@ Get a single item.
 
 Please refer to [RFC 6902][2] for the exact `JSON Patch` syntax.
 
-    $ curl -i -X PATCH -H "Content-Type: application/json" -d '[{"op": "add", "path": "/password", "value": "666666"}]' http://127.0.0.1:5000/users/543934671d41c812802711f3/
+    $ curl -i -X PATCH -H "Content-Type: application/json" -d '[{"op": "add", "path": "/password", "value": "666666"}]' http://127.0.0.1:5000/users/543934671d41c812802711f3
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
@@ -65,7 +66,7 @@ Please refer to [RFC 6902][2] for the exact `JSON Patch` syntax.
 
 ### PUT
 
-    $ curl -i -X PUT -H "Content-Type: application/json" -d '{"name": "tracey", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users/543934671d41c812802711f3/
+    $ curl -i -X PUT -H "Content-Type: application/json" -d '{"name": "tracey", "password": "123456", "date_joined": "datetime(2014-10-11T00:00:00Z)"}' http://127.0.0.1:5000/users/543934671d41c812802711f3
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
@@ -76,7 +77,7 @@ Please refer to [RFC 6902][2] for the exact `JSON Patch` syntax.
 
 Delete a list of items.
 
-    $ curl -i -X DELETE http://127.0.0.1:5000/users/
+    $ curl -i -X DELETE http://127.0.0.1:5000/users
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
@@ -85,7 +86,7 @@ Delete a list of items.
 
 Delete a single item.
 
-    $ curl -i -X DELETE http://127.0.0.1:5000/users/543934671d41c812802711f3/
+    $ curl -i -X DELETE http://127.0.0.1:5000/users/543934671d41c812802711f3
     HTTP/1.0 204 NO CONTENT
     Content-Type: application/json
     Content-Length: 0
@@ -166,11 +167,11 @@ Filtering
 
 With a single condition:
 
-    $ curl http://127.0.0.1:5000/users/543934671d41c812802711f3/?name=russell
+    $ curl http://127.0.0.1:5000/users/543934671d41c812802711f3?name=russell
 
 With multiple conditions in AND mode:
 
-    $ curl http://127.0.0.1:5000/users/543934671d41c812802711f3/?name=russell&date_joined=datetime(2014-10-11T00:00:00Z)
+    $ curl http://127.0.0.1:5000/users/543934671d41c812802711f3?name=russell&date_joined=datetime(2014-10-11T00:00:00Z)
 
 By subclassing `Filter` class, you can do more complex filtering:
 
@@ -216,7 +217,7 @@ Further, with the helper decorator `query_params`, you can simplify the above `U
 
 Then, you can filter users with `date_joined_gt` and `date_joined_lt` like this:
 
-    $ curl http://127.0.0.1:5000/users/?date_joined_gt=datetime(2014-10-01T00:00:00Z)&date_joined_lt=datetime(2014-10-03T00:00:00Z)
+    $ curl http://127.0.0.1:5000/users?date_joined_gt=datetime(2014-10-01T00:00:00Z)&date_joined_lt=datetime(2014-10-03T00:00:00Z)
 
 
 ### DuFilter
@@ -225,8 +226,8 @@ Then, you can filter users with `date_joined_gt` and `date_joined_lt` like this:
 
 With the help of `DuFilter`, you can filter resources like this (without any extra code):
 
-    $ curl http://127.0.0.1:5000/users/?username__in=russell&username__in=tracey
-    $ curl http://127.0.0.1:5000/users/?date_joined__gt=datetime(2014-10-01T00:00:00Z)&date_joined__lt=datetime(2014-10-03T00:00:00Z)
+    $ curl http://127.0.0.1:5000/users?username__in=russell&username__in=tracey
+    $ curl http://127.0.0.1:5000/users?date_joined__gt=datetime(2014-10-01T00:00:00Z)&date_joined__lt=datetime(2014-10-03T00:00:00Z)
 
 Below is the full list of Comparison Operators that `DuFilter` supports:
 
@@ -253,7 +254,7 @@ per_page | 20
 
 You may want to specify `page` and `per_page` explicitly.
 
-    $ curl http://127.0.0.1:5000/users/?page=2&per_page=10
+    $ curl http://127.0.0.1:5000/users?page=2&per_page=10
 
 
 Sorting
@@ -268,7 +269,7 @@ Sign       | Order
 
 For example, you can sort users first by `name` in ascending-order and second by `age` in descending-order:
 
-    $ curl http://127.0.0.1:5000/users/?sort=name,-age
+    $ curl http://127.0.0.1:5000/users?sort=name,-age
 
 
 Fields Selection
@@ -278,7 +279,7 @@ You can select/limit returned fields of each item with the keyword `fields` in q
 
 For example, the following request will receive all users with only `name` and `password` fields in each user:
 
-    $ curl http://127.0.0.1:5000/users/?fields=name,password
+    $ curl http://127.0.0.1:5000/users?fields=name,password
 
 
 Authentication
@@ -290,7 +291,7 @@ Authentication
 
 For resources protected by `Auth`, you can access them without credentials:
 
-    $ curl http://127.0.0.1:5000/<resource>/
+    $ curl http://127.0.0.1:5000/<resource>
 
 #### 2. Simple authentication
 
@@ -304,7 +305,7 @@ For resources protected by `Auth`, you can access them without credentials:
 
 For resources protected by `SimpleAuth`, you must set `Authorization` header to access them:
 
-    $ curl -u russell:encrypted http://127.0.0.1:5000/<resource>/
+    $ curl -u russell:encrypted http://127.0.0.1:5000/<resource>
 
 #### 3. Complex authentication
 
@@ -323,7 +324,7 @@ For resources protected by `SimpleAuth`, you must set `Authorization` header to 
 
 For resources protected by `ComplexAuth`, you can access them via `GET` without credentials:
 
-    $ curl http://127.0.0.1:5000/<resource>/
+    $ curl http://127.0.0.1:5000/<resource>
 
 But you must give credentials of a registered user to access these resources via other HTTP methods (i.e. `POST`, `PUT`, `PATCH`, `DELETE`):
 
@@ -380,7 +381,7 @@ Then, you can get a token and use it by following the steps below:
 
 1. POST (with username and password) to generate a token
 
-        $ curl -X POST -H "Content-Type: application/json" -d '{"username":"russell","password":"123456"}' http://127.0.0.1:5000/tokens/
+        $ curl -X POST -H "Content-Type: application/json" -d '{"username":"russell","password":"123456"}' http://127.0.0.1:5000/tokens
 
 2. get the token from the response (in JSON format) of POST
 
@@ -388,7 +389,7 @@ Then, you can get a token and use it by following the steps below:
 
 3. set the token as username part in the Authorization header to access resources
 
-        $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/<resource>/
+        $ curl -u eyJhbGciOiJIUzI1NiIsImV4cCI6MTQxNDIyNDExOSwiaWF0IjoxNDE0MjIwNTE5fQ.eyJwayI6IjU0NGI0YWRhMWQ0MWM4MzExMjRhNDBjZCJ9.d_6Oi4ePS7z9NhK9b9J23H3KQx4u_EdzT-VHDnV2fC8:unused http://127.0.0.1:5000/<resource>
 
 
 Sub Resources

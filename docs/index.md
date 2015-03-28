@@ -4,31 +4,12 @@ Resource
 A Python library concentrated on the Resource layer of RESTful APIs.
 
 
-Philosophy
-----------
-
-You have data somewhere:
-
-1. physical data stored in databases like MongoDB (NoSQL) or MySQL (RDBMS)
-2. virtual data existing in applications (e.g. data in business logic)
-
-and you want to expose it to your users through a RESTful Web API. `Resource` is a convenient library that allows you to do so.
-
-`Resource` is database agnostic and web framework agnostic, which means you should/can choose databases (MongoDB, MySQL, etc.) and web frameworks (Flask, Django, etc.) yourself.
-
-
-Installation
+Introduction
 ------------
 
-Install `Resource` with `pip`:
-
-    $ pip install Resource
-
-Install development version from `GitHub`:
-
-    $ git clone https://github.com/RussellLuo/resource.git
-    $ cd resource
-    $ python setup.py install
++ [Resource as the building block](introduction.md#resource-as-the-building-block)
++ [Resource is a collection](introduction.md#resource-is-a-collection)
++ [Design principle](introduction.md#design-principle)
 
 
 Quickstart

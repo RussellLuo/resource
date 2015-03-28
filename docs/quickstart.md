@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-As a start, we implement a Todo application based on `resource`.
+As a quickstart, we will implement a Todo application based on `resource`.
 
 
 Todo
