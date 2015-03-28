@@ -106,7 +106,7 @@ class View(object):
             add_link(page_count, per_page, 'last')
 
         # fill `Link` headers
-        if page != page_count:
+        if page_count > 0 and page != page_count:
             if page == 1:
                 add_next_link()
                 add_last_link()
