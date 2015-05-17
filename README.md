@@ -1,3 +1,10 @@
+**NOTE:**
+
+This library will not be actively maintained any further. You probably want to see the [RESTArt][1] library (still in development), which is a replacement with better intentions.
+
+---
+
+
 Resource
 ========
 
@@ -54,14 +61,15 @@ Features
 Documentation
 -------------
 
-Complete documentation is available [here][1].
+Complete documentation is available [here][2].
 
 
 License
 -------
 
-[MIT][2]
+[MIT][3]
 
 
-[1]: https://github.com/RussellLuo/resource/blob/master/docs/index.md
-[2]: http://opensource.org/licenses/MIT
+[1]: https://github.com/RussellLuo/restart
+[2]: https://github.com/RussellLuo/resource/blob/master/docs/index.md
+[3]: http://opensource.org/licenses/MIT
