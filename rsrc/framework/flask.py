@@ -17,7 +17,7 @@ def payload(request):
 
     Borrowed from `eve` - https://github.com/nicolaiarocci/eve
     """
-    content_type = request.headers['Content-Type'].split(';')[0]
+    content_type = request.headers.get('Content-Type', '').split(';')[0]
 
     if content_type == 'application/json':
         return request.get_json()
